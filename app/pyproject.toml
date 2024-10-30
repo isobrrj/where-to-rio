@@ -1,13 +1,14 @@
 [tool.poetry]
-name = "my-package"
+name = "where-to-rio"
 version = "0.1.0"
 description = ""
 authors = ["Igor Soares, Luiz Felipe, Iury Rosal"]
 readme = "README.md"
-packages = [{include = "my", from = "src"}]
+packages = [{include = "app", from = "src"}]
 
 [tool.poetry.dependencies]
 python = "^3.12"
+streamlit = "^1.39.0"
 
 
 [build-system]
