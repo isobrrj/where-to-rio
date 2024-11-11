@@ -1,0 +1,11 @@
+credentials:
+  usernames:
+    wheretorio:
+      email: wheretorio@gmail.com
+      logged_in: False
+      name: :) Where to Rio
+      password: abcd1234
+cookie:
+  expiry_days: 1
+  key: some_signature_key
+  name: some_cookie_name
