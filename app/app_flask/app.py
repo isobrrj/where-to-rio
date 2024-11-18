@@ -3,6 +3,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate  # Importando o Migrate
 import config
+from models import db  # Importando db do models para inicializar
 
 # Criando a aplicação Flask
 app = Flask(__name__)
@@ -11,7 +12,7 @@ app = Flask(__name__)
 app.config.from_object(config.Config)
 
 # Inicializando o SQLAlchemy
-db = SQLAlchemy(app)
+db.init_app(app)
 
 # Inicializando o Flask-Migrate
 migrate = Migrate(app, db)

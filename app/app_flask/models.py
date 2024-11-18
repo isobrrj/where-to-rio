@@ -1,5 +1,3 @@
-# models.py
-
 from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
@@ -16,8 +14,8 @@ class Usuario(db.Model):
 
 class Possui(db.Model):
     id_possui = db.Column(db.Integer, primary_key=True)
-    id_usuario = db.Column(db.Integer, db.ForeignKey('Usuario.id_usuario'), nullable=False)
-    id_roteiro = db.Column(db.Integer, db.ForeignKey('Roteiro.id_roteiro'), nullable=False)
+    id_usuario = db.Column(db.Integer, db.ForeignKey('usuario.id_usuario'), nullable=False)
+    id_roteiro = db.Column(db.Integer, db.ForeignKey('roteiro.id_roteiro'), nullable=False)
     preferencia = db.Column(db.String(120))
 
     def __repr__(self):
@@ -25,9 +23,9 @@ class Possui(db.Model):
 
 class Feedback(db.Model):
     id_feedback = db.Column(db.Integer, primary_key=True)
-    id_usuario = db.Column(db.Integer, db.ForeignKey('Usuario.id_usuario'), nullable=False)
-    id_roteiro = db.Column(db.Integer, db.ForeignKey('Roteiro.id_roteiro'), nullable=False)
-    id_atracao = db.Column(db.Integer, db.ForeignKey('Atracao.id_atracao'), nullable=False)
+    id_usuario = db.Column(db.Integer, db.ForeignKey('usuario.id_usuario'), nullable=False)
+    id_roteiro = db.Column(db.Integer, db.ForeignKey('roteiro.id_roteiro'), nullable=False)
+    id_atracao = db.Column(db.Integer, db.ForeignKey('atracao.id_atracao'), nullable=False)
     nota = db.Column(db.Integer, nullable=False)
     comentario = db.Column(db.String(120))
 
@@ -36,17 +34,17 @@ class Feedback(db.Model):
 
 class Roteiro(db.Model):
     id_roteiro = db.Column(db.Integer, primary_key=True)
-    data-inicio = db.Column(db.Date, nullable=False)
-    data-fim = db.Column(db.Date, nullable=False)
-    orçamento = db.Column(db.Float, nullable=False)
+    data_inicio = db.Column(db.Date, nullable=False)
+    data_fim = db.Column(db.Date, nullable=False)
+    orcamento = db.Column(db.Float, nullable=False)
 
     def __repr__(self):
-        return f'<Roteiro {self.nome}>'
+        return f'<Roteiro {self.id_roteiro}>'
 
 class Tem(db.Model):
     id_tem = db.Column(db.Integer, primary_key=True)
-    id_roteiro = db.Column(db.Integer, db.ForeignKey('Roteiro.id_roteiro'), nullable=False)
-    id_atracao = db.Column(db.Integer, db.ForeignKey('Atracao.id_atracao'), nullable=False)
+    id_roteiro = db.Column(db.Integer, db.ForeignKey('roteiro.id_roteiro'), nullable=False)
+    id_atracao = db.Column(db.Integer, db.ForeignKey('atracao.id_atracao'), nullable=False)
 
     def __repr__(self):
         return f'<Tem {self.id_roteiro} - {self.id_atracao}>'
@@ -54,8 +52,8 @@ class Tem(db.Model):
 class Atracao(db.Model):
     id_atracao = db.Column(db.Integer, primary_key=True)
     nome = db.Column(db.String(120), nullable=False)
-    horario-funcionamento = db.Column(db.String(120), nullable=False)
-    descrição = db.Column(db.String(120), nullable=False)
+    horario_funcionamento = db.Column(db.String(120), nullable=False)
+    descricao = db.Column(db.String(120), nullable=False)
     foto = db.Column(db.String(120), nullable=False)
 
     def __repr__(self):
@@ -63,10 +61,10 @@ class Atracao(db.Model):
 
 class Restaurante(db.Model):
     id_restaurante = db.Column(db.Integer, primary_key=True)
-    id_atracao = db.Column(db.Integer, db.ForeignKey('Atracao.id_atracao'), nullable=False)
+    id_atracao = db.Column(db.Integer, db.ForeignKey('atracao.id_atracao'), nullable=False)
     especialidade = db.Column(db.String(120), nullable=False)
     vegetariano = db.Column(db.Boolean, nullable=False)
     preco = db.Column(db.Float, nullable=False)
 
     def __repr__(self):
-        return f'<Restaurante {self.nome}>'
+        return f'<Restaurante {self.id_restaurante}>'
