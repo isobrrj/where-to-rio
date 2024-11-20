@@ -4,12 +4,13 @@ version = "0.1.0"
 description = ""
 authors = ["Igor Soares, Luiz Felipe, Iury Rosal"]
 readme = "README.md"
-packages = [{include = "app", from = "src"}]
+package-mode = false
+
 
 [tool.poetry.dependencies]
 python = "^3.12"
 streamlit = "^1.39.0"
-streamlit-authenticator = "0.4.1"
+streamlit-authenticator = "^0.4.1"
 
 
 [build-system]
