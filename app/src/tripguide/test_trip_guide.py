@@ -30,6 +30,9 @@ day2.add_evening_activity("Show de cabaré")
 # Adicionar dias ao roteiro
 trip.add_day(day1)
 trip.add_day(day2)
+trip.add_day(day2)
+trip.add_day(day2)
+trip.add_day(day2)
 
 # Exibir o roteiro completo
 print(trip)
