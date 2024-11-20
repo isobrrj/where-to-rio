@@ -47,12 +47,13 @@ class RequestScreen(ScreenTemplate):
 
     def collect_tourism_preference(self):
         st.title("Solicitação de roteiro")
-        st.write("Preencha o formulário com informações sobre sua viagem e preferências para geração de uma sugestão de roteiro")
+        st.write("Preencha o formulário com informações sobre sua viagem:")
 
         self.tourism_preference.init_date = st.date_input("Primeiro Dia do Roteiro", format="DD/MM/YYYY")
         self.tourism_preference.end_date = st.date_input("Último Dia do Roteiro", format="DD/MM/YYYY")
         self.tourism_preference.neigh = st.selectbox("Qual Bairro você estará hospedado?", self.__get_neighs())
 
+        st.write("Quais as suas preferências de passeios:")
         self.tourism_preference.preferences["Patrimônio Histórico e Cultural"] = st.checkbox("Patrimônio Histórico e Cultural")
         self.tourism_preference.preferences["Parques e Trilhas"] = st.checkbox("Parques e Trilhas")
         self.tourism_preference.preferences["Principais Pontos Turísticos"] = st.checkbox("Principais Pontos Turísticos")
@@ -64,4 +65,11 @@ class RequestScreen(ScreenTemplate):
 
         process_roteiro = st.button("Processar Roteiro")
         if process_roteiro:
-            return self.tourism_preference
+            if (self.tourism_preference.end_date - self.tourism_preference.init_date).days > 15:
+                st.error('O tempo de roteiro é no máximo 15 dias.', icon="🚨")
+            elif (self.tourism_preference.end_date - self.tourism_preference.init_date).days < 2:
+                st.error('O tempo de roteiro é no minimo 2 dias.', icon="🚨")
+            elif all(not preference for preference in self.tourism_preference.preferences.values()):
+                st.error('Selecione pelo menos uma prefência.', icon="🚨")
+            else:
+                return self.tourism_preference
