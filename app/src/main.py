@@ -1,7 +1,7 @@
 import streamlit as st
 from utils.auth.auth_users import AuthUser
 from request_screen import RequestScreen
-from tourism_preference import TourismPreference
+from trip_guide_builder import TripGuideBuilder
 
 authenticator = AuthUser()
 
@@ -11,12 +11,10 @@ if st.session_state["authentication_status"]:
     authenticator.logout()
     st.write(f'Bem Vindo *{st.session_state["name"]}*')
     request_screen = RequestScreen()
-    init_date, end_date, neigh, preferences = request_screen.show_window()
-    tourism_preference = TourismPreference(neigh=neigh,
-                                            init_date=init_date,
-                                            end_date=end_date,
-                                            preferences=preferences)
-    print(tourism_preference.build_message())
+    tourism_preference = request_screen.collect_tourism_preference()
+    if tourism_preference:
+        trip_guide_buider = TripGuideBuilder(tourism_preference=tourism_preference)
+        st.write(trip_guide_buider.build_question_message_llm())
 
 elif st.session_state["authentication_status"] is False:
     st.error('Usuário/Senha is inválido')
