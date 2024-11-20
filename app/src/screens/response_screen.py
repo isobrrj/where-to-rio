@@ -1,6 +1,6 @@
 import streamlit as st
 from base_screen import render_navbar, render_footer, render_background, apply_custom_styles
-from src.tripguide.test_trip_guide import trip
+from tripguide.test_trip_guide import trip
 
 # Configuração inicial
 st.set_page_config(page_title="Roteiro de Viagem", layout="wide")
