@@ -2,69 +2,69 @@ from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
 
-class Usuario(db.Model):
-    id_usuario = db.Column(db.Integer, primary_key=True)
-    nome = db.Column(db.String(120), nullable=False)
+class User(db.Model):
+    user_id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(120), nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
-    idade = db.Column(db.Integer, nullable=False)
-    sexo = db.Column(db.String(1), nullable=False)
+    age = db.Column(db.Integer, nullable=False)
+    gender = db.Column(db.String(1), nullable=False)
 
     def __repr__(self):
-        return f'<Usuario {self.nome}>'
+        return f'<User {self.name}>'
 
-class Possui(db.Model):
-    id_possui = db.Column(db.Integer, primary_key=True)
-    id_usuario = db.Column(db.Integer, db.ForeignKey('usuario.id_usuario'), nullable=False)
-    id_roteiro = db.Column(db.Integer, db.ForeignKey('roteiro.id_roteiro'), nullable=False)
-    preferencia = db.Column(db.String(120))
+class Owns(db.Model):
+    owns_id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), nullable=False)
+    itinerary_id = db.Column(db.Integer, db.ForeignKey('itinerary.itinerary_id'), nullable=False)
+    preference = db.Column(db.String(120))
 
     def __repr__(self):
-        return f'<Possui {self.id_usuario} - {self.id_roteiro}>'
+        return f'<Owns {self.user_id} - {self.itinerary_id}>'
 
 class Feedback(db.Model):
-    id_feedback = db.Column(db.Integer, primary_key=True)
-    id_usuario = db.Column(db.Integer, db.ForeignKey('usuario.id_usuario'), nullable=False)
-    id_roteiro = db.Column(db.Integer, db.ForeignKey('roteiro.id_roteiro'), nullable=False)
-    id_atracao = db.Column(db.Integer, db.ForeignKey('atracao.id_atracao'), nullable=False)
-    nota = db.Column(db.Integer, nullable=False)
-    comentario = db.Column(db.String(120))
+    feedback_id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), nullable=False)
+    itinerary_id = db.Column(db.Integer, db.ForeignKey('itinerary.itinerary_id'), nullable=False)
+    attraction_id = db.Column(db.Integer, db.ForeignKey('attraction.attraction_id'), nullable=False)
+    rating = db.Column(db.Integer, nullable=False)
+    comment = db.Column(db.String(120))
 
     def __repr__(self):
-        return f'<Feedback {self.id_usuario} - {self.id_roteiro}>'
+        return f'<Feedback {self.user_id} - {self.itinerary_id}>'
 
-class Roteiro(db.Model):
-    id_roteiro = db.Column(db.Integer, primary_key=True)
-    data_inicio = db.Column(db.Date, nullable=False)
-    data_fim = db.Column(db.Date, nullable=False)
-    orcamento = db.Column(db.Float, nullable=False)
-
-    def __repr__(self):
-        return f'<Roteiro {self.id_roteiro}>'
-
-class Tem(db.Model):
-    id_tem = db.Column(db.Integer, primary_key=True)
-    id_roteiro = db.Column(db.Integer, db.ForeignKey('roteiro.id_roteiro'), nullable=False)
-    id_atracao = db.Column(db.Integer, db.ForeignKey('atracao.id_atracao'), nullable=False)
+class Itinerary(db.Model):
+    itinerary_id = db.Column(db.Integer, primary_key=True)
+    start_date = db.Column(db.Date, nullable=False)
+    end_date = db.Column(db.Date, nullable=False)
+    budget = db.Column(db.Float, nullable=False)
 
     def __repr__(self):
-        return f'<Tem {self.id_roteiro} - {self.id_atracao}>'
+        return f'<Itinerary {self.itinerary_id}>'
 
-class Atracao(db.Model):
-    id_atracao = db.Column(db.Integer, primary_key=True)
-    nome = db.Column(db.String(120), nullable=False)
-    horario_funcionamento = db.Column(db.String(120), nullable=False)
-    descricao = db.Column(db.String(120), nullable=False)
-    foto = db.Column(db.String(120), nullable=False)
+class Includes(db.Model):
+    includes_id = db.Column(db.Integer, primary_key=True)
+    itinerary_id = db.Column(db.Integer, db.ForeignKey('itinerary.itinerary_id'), nullable=False)
+    attraction_id = db.Column(db.Integer, db.ForeignKey('attraction.attraction_id'), nullable=False)
 
     def __repr__(self):
-        return f'<Atracao {self.nome}>'
+        return f'<Includes {self.itinerary_id} - {self.attraction_id}>'
 
-class Restaurante(db.Model):
-    id_restaurante = db.Column(db.Integer, primary_key=True)
-    id_atracao = db.Column(db.Integer, db.ForeignKey('atracao.id_atracao'), nullable=False)
-    especialidade = db.Column(db.String(120), nullable=False)
-    vegetariano = db.Column(db.Boolean, nullable=False)
-    preco = db.Column(db.Float, nullable=False)
+class Attraction(db.Model):
+    attraction_id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(120), nullable=False)
+    operating_hours = db.Column(db.String(120), nullable=False)
+    description = db.Column(db.String(120), nullable=False)
+    photo = db.Column(db.String(120), nullable=False)
 
     def __repr__(self):
-        return f'<Restaurante {self.id_restaurante}>'
+        return f'<Attraction {self.name}>'
+
+class Restaurant(db.Model):
+    restaurant_id = db.Column(db.Integer, primary_key=True)
+    attraction_id = db.Column(db.Integer, db.ForeignKey('attraction.attraction_id'), nullable=False)
+    specialty = db.Column(db.String(120), nullable=False)
+    vegetarian = db.Column(db.Boolean, nullable=False)
+    price = db.Column(db.Float, nullable=False)
+
+    def __repr__(self):
+        return f'<Restaurant {self.restaurant_id}>'
