@@ -1,6 +1,7 @@
 import streamlit as st
 import os
 
+
 def apply_custom_styles():
     """
     Aplica estilos customizados para a página.
@@ -11,13 +12,16 @@ def apply_custom_styles():
         .navbar {
             background-color: #2B4E72;
             padding: 10px;
+            position: fixed;
+            left: 0;
+            width: 100vw;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             color: white;
-            font-family: Arial, sans-serif;
-            font-size: 18px;
-            width: 100%; /* Garante que ocupe toda a largura da tela */
+            z-index: 1000;
         }
         .navbar-links {
             display: flex;
@@ -27,6 +31,7 @@ def apply_custom_styles():
             color: white;
             text-decoration: none;
             font-weight: bold;
+            cursor: pointer;
         }
         .navbar-links a:hover {
             text-decoration: underline;
@@ -53,43 +58,35 @@ def apply_custom_styles():
             color: white;
             text-align: center;
             padding: 10px 0;
-            position: fixed; /* Fixo na parte inferior da tela */
-            bottom: 0; /* Alinha o footer na borda inferior */
-            left: 0; /* Garante que comece na borda esquerda */
-            width: 100vw; /* Usa 100% da largura da viewport */
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100vw;
             font-family: Arial, sans-serif;
             font-size: 14px;
-            z-index: 1000; /* Certifica que o footer está acima de outros elementos */
+            z-index: 1000;
         }
-
         </style>
         """,
         unsafe_allow_html=True
     )
 
-
 def render_navbar():
     """
     Renderiza a barra de navegação no topo da página.
     """
-    st.markdown(
-        """
-        <div class="navbar">
-            <!-- Links à esquerda -->
-            <div class="navbar-links">
-                <a href="#">Home</a>
-                <a href="#">Meus Roteiros</a>
-                <a href="#">Sobre</a>
-            </div>
-            <!-- Informações do usuário à direita -->
-            <div class="user-info">
-                <span>Olá, Usuário!</span>
-                <button>Sair</button>
-            </div>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+    # Navbar interativa
+    col1, col2 = st.columns([3, 1])
+    with col1:
+        st.markdown("<div class='navbar-links'>", unsafe_allow_html=True)
+        if st.button("Home"):
+            st.session_state["current_page"] = "Home"
+        if st.button("Meus Roteiros"):
+            st.session_state["current_page"] = "Meus Roteiros"
+        st.markdown("</div>", unsafe_allow_html=True)
+    with col2:
+        st.markdown("<div class='user-info'>Olá, Usuário!</div>", unsafe_allow_html=True)
+
 
 
 def render_banner():
@@ -99,20 +96,13 @@ def render_banner():
     # Caminho absoluto da imagem na pasta 'images'
     image_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'images', 'banner.jpg'))
 
-    # CSS para cortar a parte superior e inferior
     st.markdown(
         f"""
         <style>
         .banner-container {{
             position: relative;
             width: 100%;
-            height: 80%; /* Altura ajustada do banner */
             overflow: hidden;
-        }}
-        .banner-image {{
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
         }}
         .banner-text {{
             position: absolute;
@@ -120,14 +110,14 @@ def render_banner():
             left: 50%;
             transform: translate(-50%, -50%);
             color: white;
-            font-size: 72px; /* Tamanho do texto */
+            font-size: 72px;
             font-weight: bold;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
             z-index: 10;
         }}
         </style>
         <div class="banner-container">
-            <img src="data:image/jpeg;base64,{get_base64_image(image_path)}" class="banner-image" alt="Banner">
+            <img src="data:image/jpeg;base64,{get_base64_image(image_path)}" alt="Banner" style="width: 100%;">
             <div class="banner-text">WHEREtoRio</div>
         </div>
         """,
@@ -157,3 +147,10 @@ def render_footer():
         """,
         unsafe_allow_html=True
     )
+
+
+def navigate_to(page_name):
+    """
+    Função para navegar entre páginas.
+    """
+    st.session_state["current_page"] = page_name
