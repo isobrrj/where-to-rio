@@ -8,8 +8,10 @@ class RequestScreen(ScreenTemplate):
         self.tourism_preference = TourismPreference(init_date=None,
                                                     end_date=None,
                                                     neigh=None,
-                                                    preferences={})
-    
+                                                    attr_preferences={},
+                                                    lunch_preferences={},
+                                                    budget=None)
+
     def __get_neighs(self):
         return [
             "Bairro Imperial de São Cristóvão", "Benfica", "Caju", "Catumbi", "Centro",
@@ -54,14 +56,28 @@ class RequestScreen(ScreenTemplate):
         self.tourism_preference.neigh = st.selectbox("Qual Bairro você estará hospedado?", self.__get_neighs())
 
         st.write("Quais as suas preferências de passeios:")
-        self.tourism_preference.preferences["Patrimônio Histórico e Cultural"] = st.checkbox("Patrimônio Histórico e Cultural")
-        self.tourism_preference.preferences["Parques e Trilhas"] = st.checkbox("Parques e Trilhas")
-        self.tourism_preference.preferences["Principais Pontos Turísticos"] = st.checkbox("Principais Pontos Turísticos")
-        self.tourism_preference.preferences["Praias"] = st.checkbox("Praias")
-        self.tourism_preference.preferences["Arquitetura e Infraestrutura Urbana"] = st.checkbox("Arquitetura e Infraestrutura Urbana")
-        self.tourism_preference.preferences["Entretenimento e Lazer"] = st.checkbox("Entretenimento e Lazer")
-        self.tourism_preference.preferences["Compras"] = st.checkbox("Compras")
-        self.tourism_preference.preferences["Vida Noturna"] = st.checkbox("Vida Noturna")
+        self.tourism_preference.attr_preferences["Patrimônio Histórico e Cultural"] = st.checkbox("Patrimônio Histórico e Cultural")
+        self.tourism_preference.attr_preferences["Parques e Trilhas"] = st.checkbox("Parques e Trilhas")
+        self.tourism_preference.attr_preferences["Principais Pontos Turísticos"] = st.checkbox("Principais Pontos Turísticos")
+        self.tourism_preference.attr_preferences["Praias"] = st.checkbox("Praias")
+        self.tourism_preference.attr_preferences["Arquitetura e Infraestrutura Urbana"] = st.checkbox("Arquitetura e Infraestrutura Urbana")
+        self.tourism_preference.attr_preferences["Entretenimento e Lazer"] = st.checkbox("Entretenimento e Lazer")
+        self.tourism_preference.attr_preferences["Compras"] = st.checkbox("Compras")
+        self.tourism_preference.attr_preferences["Vida Noturna"] = st.checkbox("Vida Noturna")
+
+        st.write("Quais as suas preferências de restaurantes:")
+        self.tourism_preference.lunch_preferences["Brasileira"] = st.checkbox("Brasileira")
+        self.tourism_preference.lunch_preferences["Marmita"] = st.checkbox("Marmita")
+        self.tourism_preference.lunch_preferences["Lanches"] = st.checkbox("Lanches")
+        self.tourism_preference.lunch_preferences["Carnes"] = st.checkbox("Carnes")
+        self.tourism_preference.lunch_preferences["Sorvetes"] = st.checkbox("Sorvetes")
+        self.tourism_preference.lunch_preferences["Italiano"] = st.checkbox("Italiano")
+        self.tourism_preference.lunch_preferences["Japonesa"] = st.checkbox("Japonesa")
+        self.tourism_preference.lunch_preferences["Pizza"] = st.checkbox("Pizza")
+
+        self.tourism_preference.budget = st.selectbox("Qual o gasto médio (em reais) por pessoa aceitável para você?",
+                                                      options=["$", "$$", "$$$", "$$$$+"],
+                                                      placeholder="Escolha uma opção")
 
         process_roteiro = st.button("Processar Roteiro")
         if process_roteiro:
@@ -69,7 +85,9 @@ class RequestScreen(ScreenTemplate):
                 st.error('O tempo de roteiro é no máximo 15 dias.', icon="🚨")
             elif (self.tourism_preference.end_date - self.tourism_preference.init_date).days < 2:
                 st.error('O tempo de roteiro é no minimo 2 dias.', icon="🚨")
-            elif all(not preference for preference in self.tourism_preference.preferences.values()):
+            elif all(not preference for preference in self.tourism_preference.attr_preferences.values()):
+                st.error('Selecione pelo menos uma prefência.', icon="🚨")
+            elif all(not preference for preference in self.tourism_preference.lunch_preferences.values()):
                 st.error('Selecione pelo menos uma prefência.', icon="🚨")
             else:
                 return self.tourism_preference
