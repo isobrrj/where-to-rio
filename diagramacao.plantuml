@@ -1,0 +1,170 @@
+@startuml
+
+skinparam classFontColor automatic
+skinparam classHeaderBackgroundColor #444
+allow_mixing
+
+class WebApp #WhiteSmoke {
+    + main()
+    + display_auth()
+    + display_register()
+    + display_request()
+    + display_response()
+    + display_explore()
+}
+
+Interface ScreenTemplate #LightYellow {
+    + type
+    + show_window()
+}
+
+class AuthScreen #WhiteSmoke {
+    + type
+    + show_window()
+}
+
+class RegisterScreen #WhiteSmoke{
+    + type
+    + show_window()
+}
+
+class ExploreScreen #WhiteSmoke {
+    + type
+    + show_window()
+}
+
+class ResponseScreen #WhiteSmoke {
+    + type
+    + trip_guide: TripGuide
+    + feedback_trip_guide: FeedbackTripGuide
+    + show_window()
+}
+
+class RequestScreen #WhiteSmoke {
+    + type
+    + tourism_preference: BaseTourismPreference
+    + show_window()
+}
+
+interface BaseTourismPreference #LightYellow {
+    + generate_data()
+}
+
+
+class TourismPreference #WhiteSmoke {
+    + tourist_attractions
+    + trip_period
+    + hosting_neigh
+    + generate_data()
+}
+
+class User #WhiteSmoke {
+    + id
+    + email 
+    + password
+    + name
+    + generate_data()
+}
+
+class FeedbackTripGuide #WhiteSmoke {
+    + trip_guide: TripGuideDay
+    + generate_data()
+}
+
+interface BaseTripGuide #LightYellow {
+    + generate_data()
+}
+
+class TripGuideDay #WhiteSmoke {
+    + days[Day]
+    + generate_data()
+}
+
+class Day #WhiteSmoke {
+    + date
+    + day_of_week
+    + morning
+    + lunch
+    + afternoon
+    + tonight
+}
+
+interface BaseGuideBuilder #LightYellow {
+    + tourism_preference: BaseTourismPreference
+    - trip_guide: BaseTripGuide
+
+    + generate_trip_guide()
+}
+
+class TripGuideDayBuilder #WhiteSmoke {
+    + tourism_preference: TourismPreference
+    - trip_guide: TripGuideDayBuilder
+
+    + generate_trip_guide()
+}
+
+interface MachineLearningModel #LightYellow {
+    + predict()
+}
+
+class GuideML #WhiteSmoke{
+    + predict()
+}
+
+class MapsAPI #WhiteSmoke{
+    + get_place()
+}
+
+interface DBEntity #LightYellow {
+    + select()
+    + insert()
+}
+
+class DatabaseRepository #WhiteSmoke {
+    + get(entity: DBEntity)
+    + set(entity: DBEntity)
+
+}
+
+ScreenTemplate  <|-- AuthScreen
+ScreenTemplate <|-- ResponseScreen
+ScreenTemplate <|-- RequestScreen
+ScreenTemplate <|-- ExploreScreen
+ScreenTemplate <|-- RegisterScreen
+
+ExploreScreen "1" o-- "1" DatabaseRepository
+
+BaseGuideBuilder <|-- TripGuideDayBuilder
+
+WebApp *-- ScreenTemplate
+WebApp "1" o-- "1" TripGuideDayBuilder
+
+DBEntity <|-- User
+DBEntity <|-- TourismPreference
+DBEntity <|-- TripGuideDay
+DBEntity <|-- FeedbackTripGuide
+
+DBEntity "1" o-- "1" DatabaseRepository
+
+GuideML <|-- MachineLearningModel
+
+BaseTourismPreference <|-- TourismPreference
+
+BaseTripGuide <|-- TripGuideDay
+TripGuideDay "1" *-- "+" Day
+
+FeedbackTripGuide "1" *-- "1" TripGuideDay
+
+
+TripGuideDayBuilder "1" o-- "1" GuideML
+TripGuideDayBuilder "1" o-- "1" MapsAPI
+TripGuideDayBuilder "1" o-- "1" TourismPreference 
+TripGuideDayBuilder "1" o--- "1" TripGuideDay  
+
+legend right 
+    | Color | Type |
+    |<#WhiteSmoke>| Frozen_Spot|
+    |<#LightYellow>| Hot_Spot|
+endlegend
+
+@enduml
