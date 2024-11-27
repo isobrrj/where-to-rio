@@ -1,4 +1,4 @@
-from trip_guide import Day, TripGuideDay
+from .trip_guide import Day, TripGuideDay
 
 # Criar o roteiro
 trip = TripGuideDay("Roteiro para a Europa")

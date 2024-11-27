@@ -1,7 +1,7 @@
 import streamlit as st
 from fpdf import FPDF
-from base_screen import render_navbar, render_footer, apply_custom_styles, render_banner
-from test_trip_guide import trip
+from .base_screen import render_navbar, render_footer, apply_custom_styles, render_banner
+from tripguide.test_trip_guide import trip
 
 
 def generate_pdf():
@@ -51,9 +51,6 @@ def generate_pdf():
     pdf_path = "roteiro_viagem.pdf"
     pdf.output(pdf_path)
     return pdf_path
-
-
-
 
 def render_response():
 

@@ -1,5 +1,5 @@
 import streamlit as st
-from base_screen import render_navbar, render_footer, apply_custom_styles, render_banner
+from .base_screen import render_navbar, render_footer, apply_custom_styles, render_banner
 
 def render_home():
     """

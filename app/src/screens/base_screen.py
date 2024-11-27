@@ -83,6 +83,8 @@ def render_navbar():
             st.session_state["current_page"] = "Home"
         if st.button("Meus Roteiros"):
             st.session_state["current_page"] = "Meus Roteiros"
+        if st.button("Registrar"):
+            st.session_state["current_page"] = "Register"
         st.markdown("</div>", unsafe_allow_html=True)
     with col2:
         st.markdown("<div class='user-info'>Olá, Usuário!</div>", unsafe_allow_html=True)
