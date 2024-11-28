@@ -1,18 +1,46 @@
-from sqlalchemy import Column, Integer, String, Float, Boolean, ForeignKey, Date
+from sqlalchemy import Column, Integer, String, Float, Boolean, ForeignKey, Date, event
 from sqlalchemy.ext.declarative import declarative_base
+from hashlib import sha256
+import hashlib
+import uuid
 
 Base = declarative_base()
 
 class User(Base):
     __tablename__ = "user"
-    user_id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(120), nullable=False)
+    password = Column(String(120), nullable=False)
     email = Column(String(120), unique=True, nullable=False)
     age = Column(Integer, nullable=False)
     gender = Column(String(1), nullable=False)
 
     def __repr__(self):
         return f"<User {self.name}>"
+
+    @staticmethod
+    def hash_password(password):
+        """
+        Gera um hash SHA256 da senha.
+        """
+        return sha256(password.encode()).hexdigest()
+    
+# Listener para hash da senha
+@event.listens_for(User, "before_insert")
+def hash_password_before_insert(mapper, connection, target):
+    """
+    Garante que a senha seja hashada antes de uma inserção.
+    """
+    target.password = User.hash_password(target.password)
+
+@event.listens_for(User, "before_update")
+def hash_password_before_update(mapper, connection, target):
+    """
+    Garante que a senha seja hashada antes de uma atualização.
+    """
+    # Apenas faça hash se a senha foi modificada
+    if "password" in target.__dict__ and target.__dict__["password"] != target.password:
+        target.password = User.hash_password(target.password)
 
 class Owns(Base):
     __tablename__ = "owns"
