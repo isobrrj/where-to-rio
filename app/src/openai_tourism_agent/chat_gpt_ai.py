@@ -3,7 +3,8 @@ from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.chat_models import ChatOpenAI
 from langchain.chains import LLMChain
 from dotenv import load_dotenv
-from langchain_community.document_loaders import CSVLoader
+from langchain_community.document_loaders import CSVLoader, SQLDatabaseLoader
+from langchain.sql_database import SQLDatabase
 from abc import ABC, abstractmethod
 
 load_dotenv()
@@ -14,23 +15,29 @@ class ChatGptAPI(ABC):
         self.embeddings = OpenAIEmbeddings()
         self.llm = ChatOpenAI(temperature=temperature, model=model)
 
+    def load_documents_from_sqlite_url(self, sqlite_url, query, col_content, col_metadata):
+        db = SQLDatabase.from_uri(sqlite_url)
+        loader = SQLDatabaseLoader(
+            db=db,
+            query=query,
+            page_content_columns=col_content,  # Coluna que será usada como conteúdo do documento
+            metadata_columns=col_metadata      # Colunas usadas como metadados
+        )
+        return loader.load()
+
     def load_documents_from_csv(self, path):
         loader = CSVLoader(file_path=path)
         return loader.load()
 
-    def load_document(self, path, data_type):
-        if data_type == "csv":
-            documents = self.load_documents_from_csv(path)
-            return documents
-
-    def build_chain(self, path, data_type):
-        self.documents = self.load_document(path, data_type)
+    def build_chain(self):
+        if not self.documents:
+            raise Exception("É necessário realizar o carregamento dos documentos!")
         self.prompt = self.set_prompt()
         self.chain = LLMChain(llm=self.llm, prompt=self.prompt)
 
     def retrieve_info(self, query):
         if not self.documents:
-            raise Exception("É necessário realizar o carregamento dos documentos! Utilize o método build_chain para carregar documentos e definir prompt.")
+            raise Exception("É necessário realizar o carregamento dos documentos!")
         db = FAISS.from_documents(self.documents, self.embeddings)
         similar_response = db.similarity_search(query, k=3)
         return [doc.page_content for doc in similar_response]
