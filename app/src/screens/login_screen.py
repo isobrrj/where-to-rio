@@ -2,6 +2,7 @@ import streamlit as st
 from database.sessionmanager import SessionManager
 from database.models import User
 from hashlib import sha256
+from streamlit_cookies_manager import EncryptedCookieManager
 
 class AuthManager:
     """
@@ -27,14 +28,32 @@ class AuthManager:
             return user
         finally:
             self.session.close()
+    
+    @staticmethod
+    def logout(cookie_manager):
+        """
+        Realiza o logout do usuário, limpando cookies e estado de sessão.
+        """
+        # Limpa o estado de sessão
+        st.session_state["logged_in"] = False
+        st.session_state["user_id"] = None
+        st.session_state["user_name"] = "Visitante"
+        
+        # Limpa os cookies, garantindo que os valores sejam strings
+        cookie_manager["logged_in"] = "false"
+        cookie_manager["user_id"] = ""
+        cookie_manager["user_name"] = ""
+        cookie_manager.save()  # Atualiza os cookies no navegador
+        st.rerun()
 
 class LoginScreen:
     """
     Classe responsável por gerenciar a tela de login.
     """
 
-    def __init__(self):
+    def __init__(self, cookie_manager):
         self.auth_manager = AuthManager()
+        self.cookie_manager = cookie_manager
 
     def render(self):
         """
@@ -58,5 +77,21 @@ class LoginScreen:
                     st.success(f"Bem-vindo, {user.name}!")
                     st.session_state["logged_in"] = True
                     st.session_state["user_id"] = user.user_id
+                    st.session_state["user_name"] = user.name
+                    # Salvar nos cookies
+                    self.cookie_manager["logged_in"] = "true"
+                    self.cookie_manager["user_id"] = str(user.user_id)
+                    self.cookie_manager["user_name"] = user.name
+                    self.cookie_manager.save()  # Salva os cookies no navegador
+                    st.markdown(
+                        """
+                        <script>
+                            setTimeout(function() {
+                                window.location.reload();
+                            }, 1000);
+                        </script>
+                        """,
+                        unsafe_allow_html=True
+                    )
                 else:
                     st.error("Credenciais inválidas. Por favor, tente novamente.")

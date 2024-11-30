@@ -1,6 +1,7 @@
 import streamlit as st
 import os
 import base64
+from screens.login_screen import AuthManager
 
 class BaseScreen:
     """
@@ -78,24 +79,37 @@ class BaseScreen:
         )
 
     @staticmethod
-    def render_navbar():
+    def render_navbar(cookie_manager):
         """
-        Renderiza a barra de navegação no topo da página.
+        Renderiza a barra de navegação no topo da página com suporte a logout.
         """
-        col1, col2 = st.columns([3, 1])
+        # Usando colunas para alinhar os botões horizontalmente
+        col1, col2, col3, col4, col5 = st.columns([1, 1, 1, 1, 3])
+        
         with col1:
-            st.markdown("<div class='navbar-links'>", unsafe_allow_html=True)
             if st.button("Home"):
                 BaseScreen.navigate_to("Home")
-            if st.button("Meus Roteiros"):
-                BaseScreen.navigate_to("Meus Roteiros")
-            if st.button("Registrar"):
-                BaseScreen.navigate_to("Register")
-            if st.button("Login"):
-                BaseScreen.navigate_to("Login")
-            st.markdown("</div>", unsafe_allow_html=True)
         with col2:
-            st.markdown("<div class='user-info'>Olá, Usuário!</div>", unsafe_allow_html=True)
+            if st.session_state.get("logged_in", True):
+                if st.button("Meus Roteiros"):
+                    BaseScreen.navigate_to("Meus Roteiros")
+            else:
+                if st.button("Registrar"):
+                    BaseScreen.navigate_to("Register")
+        with col3:
+            if not st.session_state.get("logged_in", False):
+                if st.button("Login"):
+                    BaseScreen.navigate_to("Login")
+            else:
+                if st.button("Sair"):
+                    AuthManager.logout(cookie_manager)  # Chama o método de logout
+        
+        # Exibição do nome do usuário ou mensagem padrão
+        with col5:
+            if st.session_state.get("logged_in", False):
+                st.markdown(f"<div class='user-info'>Olá, {st.session_state['user_name']}!</div>", unsafe_allow_html=True)
+            else:
+                st.markdown("<div class='user-info'>Olá, Visitante!</div>", unsafe_allow_html=True)
 
     @staticmethod
     def render_banner():
