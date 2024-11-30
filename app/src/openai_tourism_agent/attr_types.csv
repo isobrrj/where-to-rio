@@ -1,0 +1,8 @@
+attraction_type_id, attraction_type, restaurant_type
+1, "Praias",
+2, "Parques e Trilhas",
+3, "Arquitetura e Infraestrutura Urbana",
+4, "Patrimonio, Historico e Cultural",
+5, "Entretenimento e Lazer",
+6, "Compras",
+7, "Vida Noturna",
