@@ -111,7 +111,6 @@ class BaseScreen:
             else:
                 st.markdown("<div class='user-info'>Olá, Visitante!</div>", unsafe_allow_html=True)
 
-
     @staticmethod
     def render_banner():
         """

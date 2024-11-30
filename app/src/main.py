@@ -1,5 +1,5 @@
 import streamlit as st
-from request_screen import RequestScreen
+from screens.request_screen import RequestScreen
 from trip_guide_builder import TripGuideBuilder
 from utils.pages import Pages
 from screens.login_screen import LoginScreen
@@ -24,7 +24,7 @@ def main():
         pages.page_flow()
 
         request_screen = RequestScreen()
-        tourism_preference = request_screen.collect_tourism_preference()
+        tourism_preference = request_screen.render()
         if tourism_preference:
             trip_guide_builder = TripGuideBuilder(tourism_preference=tourism_preference)
             question = trip_guide_builder.build_question_message_llm()
