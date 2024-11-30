@@ -58,7 +58,7 @@ class Feedback(Base):
     user_id = Column(Integer, ForeignKey("user.user_id"), nullable=False)
     itinerary_id = Column(Integer, ForeignKey("itinerary.itinerary_id"), nullable=False)
     attraction_id = Column(Integer, ForeignKey("attraction.attraction_id"), nullable=False)
-    rating = Column(Integer, nullable=False)
+    rating = Column(Integer, nullable=True)
     comment = Column(String(120))
 
     def __repr__(self):
@@ -69,7 +69,7 @@ class Itinerary(Base):
     itinerary_id = Column(Integer, primary_key=True)
     start_date = Column(Date, nullable=False)
     end_date = Column(Date, nullable=False)
-    budget = Column(Float, nullable=False)
+    budget = Column(Float, nullable=True)
 
     def __repr__(self):
         return f"<Itinerary {self.itinerary_id}>"
@@ -87,9 +87,11 @@ class Attraction(Base):
     __tablename__ = "attraction"
     attraction_id = Column(Integer, primary_key=True)
     name = Column(String(120), nullable=False)
-    operating_hours = Column(String(120), nullable=False)
-    description = Column(String(120), nullable=False)
-    photo = Column(String(120), nullable=False)
+    operating_hours = Column(String(120), nullable=True)
+    description = Column(String(120), nullable=True)
+    photo = Column(String(120), nullable=True)
+    attraction_type = Column(Integer, ForeignKey("attraction_type.attraction_type_id"), nullable=False)
+    time_of_day = Column(String(120), nullable=False)
 
     def __repr__(self):
         return f"<Attraction {self.name}>"
@@ -98,9 +100,18 @@ class Restaurant(Base):
     __tablename__ = "restaurant"
     restaurant_id = Column(Integer, primary_key=True)
     attraction_id = Column(Integer, ForeignKey("attraction.attraction_id"), nullable=False)
-    specialty = Column(String(120), nullable=False)
-    vegetarian = Column(Boolean, nullable=False)
-    price = Column(Float, nullable=False)
+    restaurant_type = Column(Integer, ForeignKey("attraction_type.attraction_type_id"), nullable=False)
+    vegetarian = Column(Boolean, nullable=True)
+    price = Column(Float, nullable=True)
 
     def __repr__(self):
         return f"<Restaurant {self.restaurant_id}>"
+
+class AttractionType(Base):
+    __tablename__ = "attraction_type"
+    attraction_type_id = Column(Integer, primary_key=True)
+    attraction_type = Column(String(120), nullable=True)
+    restaurant_type = Column(String(120), nullable=True)
+
+    def __repr__(self):
+        return f"<AttractionType {self.name}>"
