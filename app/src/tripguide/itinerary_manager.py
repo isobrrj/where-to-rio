@@ -1,7 +1,8 @@
 from database.sessionmanager import SessionManager
-from database.models import Includes, Itinerary, Owns
+from database.models import Attraction, Includes, Itinerary, Owns
 from sqlalchemy.exc import SQLAlchemyError
-
+from sqlalchemy.orm import joinedload
+import streamlit as st
 
 class ItineraryManager:
     """
@@ -50,6 +51,69 @@ class ItineraryManager:
             except SQLAlchemyError as e:
                 session.rollback()
                 print(f"Erro ao criar Itinerary ou associar ao usuário: {e}")
+                return None
+            
+    def get_itinerary_data(self):
+        """
+        Obtém os dados completos de um itinerário associado a um usuário, incluindo as atrações.
+        :param user_id: ID do usuário.
+        :return: Um dicionário contendo os detalhes do itinerário e atrações.
+        """
+        
+        with self.session_manager as session:
+
+            user_id = st.session_state.get("user_id")  # Certifique-se de que o ID do usuário está disponível
+            try:
+
+                # Busca o itinerário relacionado ao usuário logado
+                itinerary = (
+                    session.query(Itinerary)
+                    .join(Owns, Owns.itinerary_id == Itinerary.itinerary_id)
+                    .filter(Owns.user_id == user_id)
+                    .first()
+                )
+
+                if not itinerary:
+                    return None
+
+                # Organizar os dados por períodos do dia
+                itinerary_data = {
+                    "itinerary_id": itinerary.itinerary_id,
+                    "start_date": itinerary.start_date,
+                    "end_date": itinerary.end_date,
+                    "budget": itinerary.budget,
+                    "activities": {
+                        "morning": [],
+                        "afternoon": [],
+                        "evening": []
+                    }
+                }
+
+                includes = (
+                    session.query(Includes)
+                    .filter(Includes.itinerary_id == itinerary.itinerary_id)
+                    .all()
+                )
+
+                for include in includes:
+                    time_of_day = include.time_of_day.lower()
+                    attraction = session.query(Attraction).filter(Attraction.attraction_id == include.attraction_id).first()
+
+                    if time_of_day in itinerary_data["activities"]:
+                        itinerary_data["activities"][time_of_day].append({
+                            "name": attraction.name,
+                            "description": attraction.description,
+                            "operating_hours": attraction.operating_hours,
+                            "location": attraction.location
+                        })
+
+                print("WAAAAAAAAAAAAAAAAAAAAAAAAAA")
+                print(itinerary_data)
+
+                return itinerary_data
+
+            except Exception as e:
+                print(f"Erro ao buscar os dados do itinerário: {e}")
                 return None
         
     def add_to_includes(self, itinerary_id, attraction_id, time_of_day):
