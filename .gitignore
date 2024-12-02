@@ -3,6 +3,8 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+whereto_DB.db
+
 # C extensions
 *.so
 
