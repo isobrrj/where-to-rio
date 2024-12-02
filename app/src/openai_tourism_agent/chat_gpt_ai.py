@@ -14,20 +14,21 @@ class ChatGptAPI(ABC):
     def __init__(self, temperature=0, model="gpt-3.5-turbo") -> None:
         self.embeddings = OpenAIEmbeddings()
         self.llm = ChatOpenAI(temperature=temperature, model=model)
+        self.documents = None
 
-    def load_documents_from_sqlite_url(self, sqlite_url, query, col_content, col_metadata):
+    def load_documents_from_sqlite_url(self, sqlite_url, query):
         db = SQLDatabase.from_uri(sqlite_url)
         loader = SQLDatabaseLoader(
             db=db,
-            query=query,
-            page_content_columns=col_content,  # Coluna que será usada como conteúdo do documento
-            metadata_columns=col_metadata      # Colunas usadas como metadados
+            query=query   # Colunas usadas como metadados
         )
-        return loader.load()
+        self.documents = loader.load()
+        return self.documents
 
     def load_documents_from_csv(self, path):
         loader = CSVLoader(file_path=path)
-        return loader.load()
+        self.documents = loader.load()
+        return self.documents
 
     def build_chain(self):
         if not self.documents:

@@ -2,6 +2,7 @@ from openai_tourism_agent.rio_attraction_ml import RioAttractionML
 from trip_guide import Day, TripGuideDay
 import re
 from datetime import datetime
+from database.config import DATABASE_URL
 
 
 class TripGuideBuilder:
@@ -16,26 +17,46 @@ class TripGuideBuilder:
         str_question = str_question[:-1] + "."
         return str_question
 
-    def ask_chat_gpt(self, question):
+    def ask_chat_gpt_about_attractions(self, question):
+        query = """
+    	    SELECT
+                a.name AS "Nome da Atração",
+                a.operating_hours AS "Dias e Turnos de Funcionamento",	
+                a.description AS "Descrição",
+                a.location AS "Localização",
+                at2." attraction_type" AS "Categoria de Atração"
+            FROM attraction a
+            INNER JOIN attraction_type at2 ON at2.attraction_type_id = a.attraction_type
+        """
         chat_gpt = RioAttractionML()
-        chat_gpt.build_chain(path="src/openai_tourism_agent/attractions.csv", data_type="csv")
+        chat_gpt.load_documents_from_sqlite_url(sqlite_url=DATABASE_URL,
+                                                query=query)
+        chat_gpt.build_chain()
         response = chat_gpt.generate_response(question)
         return response
 
     def build_trip_guide_day(self, response):
-        # Extração de dados com regex
-        pattern = r"Dia (\d{2}/\d{2}/\d{4}) \((.*?)\) - (.*?) - (.*?)\s+Localização: (.*?)\s+Descrição: (.*?)(?:\n|$)"
-        matches = re.findall(pattern, response, re.DOTALL)
+        # Regex para capturar as informações
+        pattern = re.compile(
+            r"Dia (\d{2}/\d{2}/\d{4}) \(([^)]+)\) - ([^-]+) - ([^-]+) "
+            r"Descrição: (.*?) "
+            r"Localização: (.*?) "
+            r"Categoria de Atração: (.*?)$",
+            re.DOTALL | re.MULTILINE
+        )
+
+        # Extraindo os dados
+        resultados = pattern.findall(response)
 
         # Organização dos dados no objeto Day
         activities = {"morning": [], "afternoon": [], "evening": []}
         number_of_turns = 0
         days = []
 
-        for match in matches:
+        for match in resultados:
             print(number_of_turns)
             print(match)
-            date, day_of_week, period, activity, location, description = match
+            date, day_of_week, period, activity, description, location, category = match
             activity_details = {
                 "name": activity.strip(),
                 "location": location.strip(),
@@ -62,16 +83,6 @@ class TripGuideBuilder:
                 days.append(day)
                 number_of_turns = 0
                 activities = {"morning": [], "afternoon": [], "evening": []}
-        if number_of_turns != 0:  # Dia Anterior não teve 3 turnos
-            date_obj = datetime.strptime(date, "%d/%m/%Y")
-            day = Day(
-                date=date_obj,
-                day_of_week=day_of_week,
-                morning=activities["morning"],
-                afternoon=activities["afternoon"],
-                evening=activities["evening"]
-            )
-            days.append(day)
         
         trip_guide_day = TripGuideDay("roteiro", days=days)
         return trip_guide_day

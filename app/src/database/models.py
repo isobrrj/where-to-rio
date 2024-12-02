@@ -4,7 +4,9 @@ from hashlib import sha256
 import hashlib
 import uuid
 
+
 Base = declarative_base()
+
 
 class User(Base):
     __tablename__ = "user"

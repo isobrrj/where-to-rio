@@ -33,13 +33,14 @@ result = page_manager.render_current_page()
 if result:
     trip_guide_builder = TripGuideBuilder(tourism_preference=result)
     question = trip_guide_builder.build_question_message_llm()
-
-    suggestion = """
-    Dia 02/12/2024 (Domingo) - Manhã - Centro Cultural Banco do Brasil - CCBB Rio de Janeiro
-    Localização: Rua Primeiro de Março, 66, Rio de Janeiro, Estado do Rio de Janeiro 20010-000 Brasil
-    Descrição: Inaugurado em 12 de outubro de 1989...
-    """
-    
+    st.write(question)
+    suggestion = trip_guide_builder.ask_chat_gpt_about_attractions(question)
+    # suggestion = """
+    # Dia 02/12/2024 (Domingo) - Manhã - Centro Cultural Banco do Brasil - CCBB Rio de Janeiro
+    # Localização: Rua Primeiro de Março, 66, Rio de Janeiro, Estado do Rio de Janeiro 20010-000 Brasil
+    # Descrição: Inaugurado em 12 de outubro de 1989...
+    # """
+    st.write(suggestion)
     trip_guide_day = trip_guide_builder.build_trip_guide_day(suggestion)
     st.write(str(trip_guide_day))
 
