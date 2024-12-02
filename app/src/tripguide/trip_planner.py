@@ -155,6 +155,11 @@ class TripPlanner:
         # Processar as sugestões
         trip_guide_day = trip_guide_builder.build_trip_guide_day(suggestion)
 
+        print('\n\n\n')
+        print('AI BRASIL')
+        print(str(trip_guide_day))
+        print('\n\n\n')
+
         # Processar as preferências e obter os IDs dos tipos de atrações
         preferences = self.process_preferences()
 

@@ -107,8 +107,7 @@ class ItineraryManager:
                             "location": attraction.location
                         })
 
-                print("WAAAAAAAAAAAAAAAAAAAAAAAAAA")
-                print(itinerary_data)
+
 
                 return itinerary_data
 

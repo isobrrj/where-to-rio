@@ -1,3 +1,4 @@
+from datetime import timedelta
 import streamlit as st
 from fpdf import FPDF
 from tripguide.itinerary_manager import ItineraryManager
@@ -126,7 +127,18 @@ class ResponseScreen:
         dates = [
             {"date": itinerary_data["start_date"], "day_of_week": "Segunda-feira"},
             {"date": itinerary_data["end_date"], "day_of_week": "Quarta-feira"},
-        ]  # Ajuste a lógica para preencher dias corretamente
+        ]
+
+        dates = []
+        current_date = itinerary_data["start_date"]
+        end_date = itinerary_data["end_date"]
+
+        while current_date <= end_date:
+            dates.append({
+                "date": current_date.strftime("%Y-%m-%d"),
+                "day_of_week": current_date.strftime("%A")
+            })
+            current_date += timedelta(days=1)
 
         # Criar colunas para cada dia
         columns = st.columns(len(dates))
