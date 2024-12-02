@@ -1,5 +1,5 @@
 from database.sessionmanager import SessionManager
-from database.models import Itinerary, Owns
+from database.models import Includes, Itinerary, Owns
 from sqlalchemy.exc import SQLAlchemyError
 
 
@@ -51,6 +51,26 @@ class ItineraryManager:
                 session.rollback()
                 print(f"Erro ao criar Itinerary ou associar ao usuário: {e}")
                 return None
+        
+    def add_to_includes(self, itinerary_id, attraction_id, time_of_day):
+        """
+        Adiciona uma entrada à tabela Includes.
+        :param itinerary_id: ID do itinerário.
+        :param attraction_id: ID da atração.
+        :param time_of_day: Período do dia (ex: "Manhã", "Tarde", "Noite").
+        """
+        try:
+            new_include = Includes(
+                itinerary_id=itinerary_id,
+                attraction_id=attraction_id,
+                time_of_day=time_of_day
+            )
+            self.session_manager.add(new_include)
+            self.session_manager.commit()
+            print(f"Adicionado à tabela Includes: {itinerary_id} - {attraction_id}")
+        except Exception as e:
+            self.session_manager.rollback()
+            print(f"Erro ao adicionar à tabela Includes: {e}")
 
     def get_user_itineraries(self, user_id):
         """

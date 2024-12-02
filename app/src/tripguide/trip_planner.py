@@ -21,6 +21,47 @@ class TripPlanner:
         self.attraction_manager = AttractionManager()
         self.itinerary_manager = ItineraryManager()
 
+    def add_includes_for_itinerary(self, itinerary_id, attractions):
+        """
+        Adiciona entradas à tabela Includes para um itinerário e suas atrações.
+        :param itinerary_id: ID do itinerário.
+        :param attractions: Lista de atrações sugeridas no formato:
+            [(name, time_of_day, description, operating_hours)]
+        """
+        for attraction in attractions:
+            name, time_of_day, description, operating_hours = attraction
+
+            # Verifica se a atração já existe no banco
+            existing_attraction = self.attraction_manager.get_attraction_by_name(name)
+
+            if existing_attraction:
+                # Se existir, usa o ID da atração existente
+                attraction_id = existing_attraction.attraction_id
+            else:
+                # Se não existir, cria uma nova atração
+                self.attraction_manager.insert_attraction(
+                    name=name,
+                    operating_hours=operating_hours,
+                    description=description,
+                    attraction_type=1,  # Ajuste para o tipo de atração (defina a lógica necessária aqui)
+                    photo=None  # Adicione uma foto, se aplicável
+                )
+
+                # Busca novamente para obter o ID da atração recém-inserida
+                new_attraction = self.attraction_manager.get_attraction_by_name(name)
+                if new_attraction:
+                    attraction_id = new_attraction.attraction_id
+                else:
+                    print(f"Erro ao criar a atração {name}.")
+                    continue
+
+            # Insere na tabela Includes
+            self.itinerary_manager.add_to_includes(
+                itinerary_id=itinerary_id,
+                attraction_id=attraction_id,
+                time_of_day=time_of_day
+            )
+
     def process_preferences(self):
         """
         Processa as preferências do usuário e retorna os IDs dos tipos de atrações e restaurantes.
@@ -105,6 +146,10 @@ class TripPlanner:
                 Dia 03/12/2024 (Segunda-Feira) - Noite - Praia de Copacabana
                 Localização: Copacabana, Brasil
                 Descrição: A Praia de Copacabana é uma praia localizada no bairro de Copacabana, na Zona Sul da cidade do Rio de Janeiro, no Brasil. É considerada uma das praias mais famosas do mundo.
+
+                Dia 03/12/2024 (Segunda-Feira) - Noite - Praia do Teste
+                Localização: Copacabana, Brasil
+                Descrição: A Praia de Copacabana é uma praia localizada no bairro de Copacabana, na Zona Sul da cidade do Rio de Janeiro, no Brasil. É considerada uma das praias mais famosas do mundo.
             """
 
         # Processar as sugestões
@@ -117,7 +162,7 @@ class TripPlanner:
         numeric_budget = self.map_budget_to_number()
 
         # Criar o itinerário no banco
-        success = self.itinerary_manager.create_itinerary(
+        itinerary_id = self.itinerary_manager.create_itinerary(
             user_id=self.user_id,
             start_date=self.tourism_preference.init_date,
             end_date=self.tourism_preference.end_date,
@@ -125,7 +170,17 @@ class TripPlanner:
             preference=preferences # Ajuste as preferências conforme necessário
         )
 
-        if success:
+        if itinerary_id:
+            # Adicionar as atrações sugeridas à tabela Includes
+            attractions = []
+            for day in trip_guide_day.days:
+                for period in ["morning", "afternoon", "evening"]:
+                    for activity in getattr(day, period):
+                        attractions.append(
+                            (activity["name"], period.capitalize(), activity["description"], day.date)
+                        )
+            self.add_includes_for_itinerary(itinerary_id, attractions)
+
             return "Roteiro criado com sucesso!"
         else:
             return "Erro ao criar o roteiro."
