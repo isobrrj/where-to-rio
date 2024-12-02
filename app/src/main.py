@@ -1,6 +1,6 @@
 import streamlit as st
 from screens.request_screen import RequestScreen
-from trip_guide_builder import TripGuideBuilder
+from tripguide.trip_guide_builder import TripGuideBuilder
 from utils.pages import Pages
 from screens.login_screen import LoginScreen
 

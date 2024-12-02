@@ -1,3 +1,4 @@
+
 class Day:
     """
     Representa um dia no roteiro, com atividades divididas por períodos.
@@ -51,9 +52,9 @@ class Day:
         """
         Retorna uma representação em string do dia e suas atividades.
         """
-        morning_str = "\n    - ".join(self.morning) if self.morning else "Nenhuma atividade"
-        afternoon_str = "\n    - ".join(self.afternoon) if self.afternoon else "Nenhuma atividade"
-        evening_str = "\n    - ".join(self.evening) if self.evening else "Nenhuma atividade"
+        morning_str = "\n    - ".join([activity["name"] for activity in self.morning]) if self.morning else "Nenhuma atividade"
+        afternoon_str = "\n    - ".join([activity["name"] for activity in self.afternoon]) if self.afternoon else "Nenhuma atividade"
+        evening_str = "\n    - ".join([activity["name"] for activity in self.evening]) if self.evening else "Nenhuma atividade"
         return (
             f"Data: {self.date} ({self.day_of_week})\n"
             f"  Café da Manhã: {self.breakfast or 'Nenhuma atividade'}\n"
@@ -69,14 +70,20 @@ class TripGuideDay:
     """
     Representa um roteiro de viagem composto por vários dias.
     """
-    def __init__(self, name):
+    def __init__(self, name, days=None):
         """
         Inicializa o roteiro de viagem.
         
         :param name: O nome do roteiro de viagem.
         """
         self.name = name
-        self.days = []  # Lista de objetos Day
+        self.days = [] if not days else days  # Lista de objetos Day
+    
+    def __iter__(self):
+        """
+        Permite que a classe seja iterada diretamente sobre os dias.
+        """
+        return iter(self.days)
 
     def add_day(self, day):
         """
