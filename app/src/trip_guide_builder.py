@@ -37,17 +37,11 @@ class TripGuideBuilder:
 
     def build_trip_guide_day(self, response):
         # Regex para capturar as informações
-        pattern = re.compile(
-            r"Dia (\d{2}/\d{2}/\d{4}) \(([^)]+)\) - ([^-]+) - ([^-]+) "
-            r"Descrição: (.*?) "
-            r"Localização: (.*?) "
-            r"Categoria de Atração: (.*?)$",
-            re.DOTALL | re.MULTILINE
-        )
+        pattern = r"Dia (\d{2}/\d{2}/\d{4}) \(([^)]+)\) - (\w+) - (.*?) Descrição: (.*?) Localização: (.*?) Categoria de Atração:"
 
         # Extraindo os dados
-        resultados = pattern.findall(response)
-
+        resultados = re.findall(pattern, response)
+        print(resultados)
         # Organização dos dados no objeto Day
         activities = {"morning": [], "afternoon": [], "evening": []}
         number_of_turns = 0
@@ -56,7 +50,7 @@ class TripGuideBuilder:
         for match in resultados:
             print(number_of_turns)
             print(match)
-            date, day_of_week, period, activity, description, location, category = match
+            date, day_of_week, period, activity, description, location = match
             activity_details = {
                 "name": activity.strip(),
                 "location": location.strip(),
