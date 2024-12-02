@@ -41,15 +41,14 @@ class TripGuideBuilder:
 
         # Extraindo os dados
         resultados = re.findall(pattern, response)
-        print(resultados)
         # Organização dos dados no objeto Day
         activities = {"morning": [], "afternoon": [], "evening": []}
         number_of_turns = 0
         days = []
 
         for match in resultados:
-            print(number_of_turns)
-            print(match)
+            # print(number_of_turns)
+            # print(match)
             date, day_of_week, period, activity, description, location = match
             activity_details = {
                 "name": activity.strip(),
