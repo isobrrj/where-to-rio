@@ -1,5 +1,5 @@
 from openai_tourism_agent.rio_attraction_ml import RioAttractionML
-from trip_guide import Day, TripGuideDay
+from tripguide.trip_guide import Day, TripGuideDay
 import re
 from datetime import datetime
 

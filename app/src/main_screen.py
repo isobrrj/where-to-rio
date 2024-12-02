@@ -1,5 +1,6 @@
+
 import streamlit as st
-from trip_guide_builder import TripGuideBuilder
+from tripguide.trip_planner import TripPlanner
 from page_manager import PageManager
 from screens.base_screen import BaseScreen
 from streamlit_cookies_manager import EncryptedCookieManager
@@ -29,19 +30,18 @@ page_manager = PageManager(cookie_manager)  # Inicializa o gerenciador de págin
 # Renderiza a página atual e captura o resultado, se houver
 result = page_manager.render_current_page()
 
+
 # Processa o resultado, se for gerado pela página RequestScreen
 if result:
-    trip_guide_builder = TripGuideBuilder(tourism_preference=result)
-    question = trip_guide_builder.build_question_message_llm()
+    user_id = st.session_state["user_id"]
 
-    suggestion = """
-    Dia 02/12/2024 (Domingo) - Manhã - Centro Cultural Banco do Brasil - CCBB Rio de Janeiro
-    Localização: Rua Primeiro de Março, 66, Rio de Janeiro, Estado do Rio de Janeiro 20010-000 Brasil
-    Descrição: Inaugurado em 12 de outubro de 1989...
-    """
-    
-    trip_guide_day = trip_guide_builder.build_trip_guide_day(suggestion)
-    st.write(str(trip_guide_day))
+    # Cria uma instância do TripPlanner
+    trip_planner = TripPlanner(tourism_preference=result, user_id=user_id)
+
+    # Processa o roteiro
+    message = trip_planner.process_trip()
+    st.success(message)
+
 
 
 footer = BaseScreen.render_footer()
