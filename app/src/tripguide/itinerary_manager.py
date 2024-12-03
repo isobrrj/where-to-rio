@@ -1,3 +1,4 @@
+from datetime import timedelta
 from database.sessionmanager import SessionManager
 from database.models import Attraction, Includes, Itinerary, Owns
 from sqlalchemy.exc import SQLAlchemyError
@@ -55,16 +56,13 @@ class ItineraryManager:
             
     def get_itinerary_data(self):
         """
-        Obtém os dados completos de um itinerário associado a um usuário, incluindo as atrações.
-        :param user_id: ID do usuário.
-        :return: Um dicionário contendo os detalhes do itinerário e atrações.
+        Obtém os dados completos de um itinerário associado a um usuário, incluindo as atrações, organizadas por data.
+        :return: Um dicionário contendo os detalhes do itinerário e atrações organizadas por dia.
         """
-        
         with self.session_manager as session:
-
             user_id = st.session_state.get("user_id")  # Certifique-se de que o ID do usuário está disponível
-            try:
 
+            try:
                 # Busca o itinerário relacionado ao usuário logado
                 itinerary = (
                     session.query(Itinerary)
@@ -76,61 +74,81 @@ class ItineraryManager:
                 if not itinerary:
                     return None
 
-                # Organizar os dados por períodos do dia
+                # Organizar os dados do itinerário
                 itinerary_data = {
                     "itinerary_id": itinerary.itinerary_id,
                     "start_date": itinerary.start_date,
                     "end_date": itinerary.end_date,
                     "budget": itinerary.budget,
-                    "activities": {
-                        "morning": [],
-                        "afternoon": [],
-                        "evening": []
-                    }
+                    "days": []  # Lista de dias com atividades
                 }
 
+                # Gera os dias do itinerário
+                current_date = itinerary.start_date
+                while current_date <= itinerary.end_date:  # Inclui a data final no intervalo
+                    itinerary_data["days"].append({
+                        "date": current_date,
+                        "day_of_week": current_date.strftime("%A"),
+                        "activities": {
+                            "morning": [],
+                            "afternoon": [],
+                            "evening": []
+                        }
+                    })
+                    current_date += timedelta(days=1)
+
+                # Busca as atividades associadas ao itinerário
                 includes = (
                     session.query(Includes)
                     .filter(Includes.itinerary_id == itinerary.itinerary_id)
                     .all()
                 )
 
+                # Organiza as atividades nos dias correspondentes
                 for include in includes:
                     time_of_day = include.time_of_day.lower()
-                    attraction = session.query(Attraction).filter(Attraction.attraction_id == include.attraction_id).first()
+                    attraction = (
+                        session.query(Attraction)
+                        .filter(Attraction.attraction_id == include.attraction_id)
+                        .first()
+                    )
 
-                    if time_of_day in itinerary_data["activities"]:
-                        itinerary_data["activities"][time_of_day].append({
-                            "name": attraction.name,
-                            "description": attraction.description,
-                            "operating_hours": attraction.operating_hours,
-                            "location": attraction.location
-                        })
-
-
+                    if attraction:
+                        # Adiciona a atividade ao dia correto baseado na data da tabela Includes
+                        for day in itinerary_data["days"]:
+                            if day["date"] == include.date:  # Usa a data diretamente da tabela Includes
+                                day["activities"][time_of_day].append({
+                                    "name": attraction.name,
+                                    "description": attraction.description,
+                                    "operating_hours": attraction.operating_hours,
+                                    "location": attraction.location
+                                })
 
                 return itinerary_data
 
             except Exception as e:
                 print(f"Erro ao buscar os dados do itinerário: {e}")
                 return None
+
         
-    def add_to_includes(self, itinerary_id, attraction_id, time_of_day):
+    def add_to_includes(self, itinerary_id, attraction_id, time_of_day, date):
         """
         Adiciona uma entrada à tabela Includes.
         :param itinerary_id: ID do itinerário.
         :param attraction_id: ID da atração.
         :param time_of_day: Período do dia (ex: "Manhã", "Tarde", "Noite").
+        :param date: Data da atividade.
         """
         try:
             new_include = Includes(
                 itinerary_id=itinerary_id,
                 attraction_id=attraction_id,
-                time_of_day=time_of_day
+                time_of_day=time_of_day,
+                date=date
             )
             self.session_manager.add(new_include)
             self.session_manager.commit()
-            print(f"Adicionado à tabela Includes: {itinerary_id} - {attraction_id}")
+            print(f"Adicionado à tabela Includes: {itinerary_id} - {attraction_id} - {date}")
         except Exception as e:
             self.session_manager.rollback()
             print(f"Erro ao adicionar à tabela Includes: {e}")
