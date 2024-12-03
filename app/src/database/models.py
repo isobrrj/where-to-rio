@@ -81,9 +81,12 @@ class Includes(Base):
     includes_id = Column(Integer, primary_key=True)
     itinerary_id = Column(Integer, ForeignKey("itinerary.itinerary_id"), nullable=False)
     attraction_id = Column(Integer, ForeignKey("attraction.attraction_id"), nullable=False)
+    time_of_day = Column(String(120), nullable=False)
+    date = Column(Date, nullable=False)  # Nova coluna para armazenar a data da atividade
 
     def __repr__(self):
-        return f"<Includes {self.itinerary_id} - {self.attraction_id}>"
+        return f"<Includes {self.itinerary_id} - {self.attraction_id} - {self.date}>"
+
 
 class Attraction(Base):
     __tablename__ = "attraction"

@@ -124,33 +124,19 @@ class TripPlanner:
         trip_guide_builder = TripGuideBuilder(tourism_preference=self.tourism_preference)
         question = trip_guide_builder.build_question_message_llm()
 
-        # suggestion = trip_guide_buider.ask_chat_gpt(question)
-
+        # Obter sugestões do modelo (aqui está mockado)
         suggestion = """
-                Dia 02/12/2024 (Domingo) - Manhã - Centro Cultural Banco do Brasil - CCBB Rio de Janeiro
-                Localização: Rua Primeiro de Março, 66, Rio de Janeiro, Estado do Rio de Janeiro 20010-000 Brasil
-                Descrição: Inaugurado em 12 de outubro de 1989, o Centro Cultural Banco do Brasil Rio de Janeiro transformou-se rapidamente em um dos centros culturais mais importantes do País. Na lista dos 100 museus mais visitados do mundo em 2016 da publicação inglesa The Art Newspaper, o Centro Cultural do Banco do Brasil no Rio de Janeiro ocupa a 26ª colocação com 2.216.880 visitantes.
-
-                Dia 02/12/2024 (Domingo) - Tarde - Praia de Copacabana
-                Localização: Copacabana, Brasil
-                Descrição: A Praia de Copacabana é uma praia localizada no bairro de Copacabana, na Zona Sul da cidade do Rio de Janeiro, no Brasil. É considerada uma das praias mais famosas do mundo.
-
-                Dia 03/12/2024 (Segunda-Feira) - Manhã - Praia de Ipanema
-                Localização: Avenida Vieira Souto, Rio de Janeiro, Estado do Rio de Janeiro 22420-002 Brasil
-                Descrição: Esta é uma praia bastante badalada no Rio, frequentada por artistas, jovens, turistas e moradores que aproveitam seu calçadão para a prática de exercícios. A praia do bairro nobre é um dos points da cidade quando o assunto é curtir o mar e tem uma parte destinada ao público LGBT+. As condições do mar dependem do período, mas muitas vezes o mar é tranquilo, com ondas fracas.
-
-                Dia 03/12/2024 (Segunda-Feira) - Tarde - Centro Cultural Banco do Brasil - CCBB Rio de Janeiro
-                Localização: Rua Primeiro de Março, 66, Rio de Janeiro, Estado do Rio de Janeiro 20010-000 Brasil
-                Descrição: Inaugurado em 12 de outubro de 1989, o Centro Cultural Banco do Brasil Rio de Janeiro transformou-se rapidamente em um dos centros culturais mais importantes do País. Na lista dos 100 museus mais visitados do mundo em 2016 da publicação inglesa The Art Newspaper, o Centro Cultural do Banco do Brasil no Rio de Janeiro ocupa a 26ª colocação com 2.216.880 visitantes.
-
-                Dia 03/12/2024 (Segunda-Feira) - Noite - Praia de Copacabana
-                Localização: Copacabana, Brasil
-                Descrição: A Praia de Copacabana é uma praia localizada no bairro de Copacabana, na Zona Sul da cidade do Rio de Janeiro, no Brasil. É considerada uma das praias mais famosas do mundo.
-
-                Dia 03/12/2024 (Segunda-Feira) - Noite - Praia do Teste
-                Localização: Copacabana, Brasil
-                Descrição: A Praia de Copacabana é uma praia localizada no bairro de Copacabana, na Zona Sul da cidade do Rio de Janeiro, no Brasil. É considerada uma das praias mais famosas do mundo.
-            """
+        Dia 03/12/2024 (Terça-Feira) - Manhã - Maracanã Descrição: Estádio Jornalista Mário Filho, mais conhecido como Maracanã, ou carinhosamente como Maraca, é um estádio de futebol localizado no bairro de mesmo nome, na Zona Norte da cidade brasileira do Rio de Janeiro. Localização: R. Prof. Eurico Rabelo - Maracanã, Rio de Janeiro - RJ, 20271-150 Categoria de Atração: Principais Pontos Turísticos
+        Dia 03/12/2024 (Terça-Feira) - Tarde - Praia de Copacabana Descrição: A Praia de Copacabana é uma praia localizada no bairro de Copacabana, na Zona Sul da cidade do Rio de Janeiro, no Brasil. É considerada uma das praias mais famosas do mundo. Localização: Copacabana; Brasil Categoria de Atração: Praias
+        Dia 03/12/2024 (Terça-Feira) - Noite - Praia de Ipanema Descrição: Esta é uma praia bastante badalada no Rio, frequentada por artistas, jovens, turistas e moradores que aproveitam seu calçadão para a prática de exercícios. A praia do bairro nobre é um dos points da cidade quando o assunto é curtir o mar e tem uma parte destinada ao público LGBT+. As condições do mar dependem do período, mas muitas vezes o mar é tranquilo, com ondas fracas. Localização: Avenida Vieira Souto, Rio de Janeiro, Estado do Rio de Janeiro 22420-002 Brasil Categoria de Atração: Praias
+        Dia 04/12/2024 (Quarta-Feira) - Manhã - Parque Lage Descrição: O Parque Lage é um parque público no bairro Jardim Botânico, na Zona Sul do Rio de Janeiro. Possui trilhas, jardins, um belo palacete e uma vista incrível para o Cristo Redentor. Localização: R. Jardim Botânico, 414 - Jardim Botânico, Rio de Janeiro - RJ, 22461-000 Categoria de Atração: Parques e Trilhas
+        Dia 04/12/2024 (Quarta-Feira) - Tarde - Museu Histórico Nacional Descrição: O Museu Histórico Nacional é um museu localizado na Praça Marechal Âncora, no centro histórico do Rio de Janeiro. Possui um acervo que conta a história do Brasil desde a época do descobrimento. Localização: Praça Marechal Âncora, S/N - Centro, Rio de Janeiro - RJ, 20021-200 Categoria de Atração: Patrimônio Histórico e Cultural
+        Dia 04/12/2024 (Quarta-Feira) - Noite - Pão de Açúcar Descrição: O Pão de Açúcar é um dos principais pontos turísticos do Rio de Janeiro. É um complexo de morros localizado na entrada da Baía de Guanabara, no bairro da Urca, com uma vista panorâmica incrível da cidade. Localização: Av. Pasteur, 520 - Urca, Rio de Janeiro - RJ, 22290-255 Categoria de Atração: Principais Pontos Turísticos
+        Dia 05/12/2024 (Quinta-Feira) - Manhã - Jardim Botânico Descrição: O Jardim Botânico do Rio de Janeiro é um dos mais importantes do Brasil, com uma grande diversidade de plantas e árvores. Possui uma estufa de plantas raras, lagos e trilhas para caminhada. Localização: R. Jardim Botânico, 1008 - Jardim Botânico, Rio de Janeiro - RJ, 22460-030 Categoria de Atração: Parques e Trilhas
+        Dia 05/12/2024 (Quinta-Feira) - Tarde - Museu do Amanhã Descrição: O Museu do Amanhã é um museu de ciências localizado na Praça Mauá, na região portuária do Rio de Janeiro. Possui exposições interativas sobre sustentabilidade, meio ambiente e o futuro da humanidade. Localização: Praça Mauá, 1 - Centro, Rio de Janeiro - RJ, 20081-240 Categoria de Atração: Patrimônio Histórico e Cultural
+        Dia 05/12/2024 (Quinta-Feira) - Noite - Lapa Descrição: A Lapa é um bairro boêmio do Rio de Janeiro, conhecido pelos seus arcos, bares, casas de show e vida noturna agitada. É um local tradicional para quem busca diversão e música ao vivo. Localização: Lapa, Rio de Janeiro - RJ Categoria de Atração: Principais Pontos Turísticos
+        Espero que aproveite sua viagem e as sugestões de roteiro!
+    """
 
         # Processar as sugestões
         trip_guide_day = trip_guide_builder.build_trip_guide_day(suggestion)
@@ -158,7 +144,7 @@ class TripPlanner:
         # Processar as preferências e obter os IDs dos tipos de atrações
         preferences = self.process_preferences()
 
-         # Mapear o orçamento para um número
+        # Mapear o orçamento para um número
         numeric_budget = self.map_budget_to_number()
 
         # Criar o itinerário no banco
@@ -166,21 +152,54 @@ class TripPlanner:
             user_id=self.user_id,
             start_date=self.tourism_preference.init_date,
             end_date=self.tourism_preference.end_date,
-            budget=numeric_budget,  # Ajuste o orçamento conforme necessário
-            preference=preferences # Ajuste as preferências conforme necessário
+            budget=numeric_budget,
+            preference=preferences
         )
 
         if itinerary_id:
             # Adicionar as atrações sugeridas à tabela Includes
-            attractions = []
             for day in trip_guide_day.days:
+                day_date = day.date  # A data do dia no TripGuideDay
                 for period in ["morning", "afternoon", "evening"]:
                     for activity in getattr(day, period):
-                        attractions.append(
-                            (activity["name"], period.capitalize(), activity["description"], day.date)
+                        self.itinerary_manager.add_to_includes(
+                            itinerary_id=itinerary_id,
+                            attraction_id=self._get_or_create_attraction(activity),
+                            time_of_day=period.capitalize(),
+                            date=day_date
                         )
-            self.add_includes_for_itinerary(itinerary_id, attractions)
 
             return "Roteiro criado com sucesso!"
         else:
             return "Erro ao criar o roteiro."
+
+    def _get_or_create_attraction(self, activity):
+        """
+        Verifica se a atração já existe no banco ou cria uma nova.
+        :param activity: Dicionário contendo os detalhes da atividade.
+        :return: ID da atração.
+        """
+        name = activity["name"]
+        description = activity.get("description", "Descrição não fornecida")
+        operating_hours = activity.get("operating_hours", "Horário não especificado")
+        location = activity.get("location", None)
+
+        # Verifica se a atração já existe no banco
+        existing_attraction = self.attraction_manager.get_attraction_by_name(name)
+        if existing_attraction:
+            return existing_attraction.attraction_id
+
+        # Se não existir, cria uma nova atração
+        self.attraction_manager.insert_attraction(
+            name=name,
+            operating_hours=operating_hours,
+            description=description,
+            attraction_type=1,  # Ajuste conforme necessário
+            photo=None
+        )
+
+        new_attraction = self.attraction_manager.get_attraction_by_name(name)
+        if new_attraction:
+            return new_attraction.attraction_id
+        else:
+            raise ValueError(f"Erro ao criar ou recuperar a atração: {name}")
