@@ -6,6 +6,9 @@ class PageManager:
     Classe responsável por gerenciar a navegação entre páginas.
     """
 
+    current_page = None
+    page_args = {}
+
     def __init__(self, cookie_manager):
         """
         Inicializa o gerenciador de páginas.
@@ -23,15 +26,20 @@ class PageManager:
             "Home": ("screens.home_screen.HomeScreen", False),
             "Login": ("screens.login_screen.LoginScreen", True),
             "Register": ("screens.register_screen.RegisterScreen", False),
-            "Meus Roteiros": ("screens.response_screen.ResponseScreen", True),
+            "Meus Roteiros": ("screens.itinerarylist_screen.ItineraryListScreen", True),
+            "Roteiro": ("screens.response_screen.ResponseScreen", True),
             "RequestScreen": ("screens.request_screen.RequestScreen", False),
         }
 
     @staticmethod
-    def set_page(page_name):
+    def set_page(page_name, **kwargs):
         """
-        Define a página atual no estado global e recarrega a aplicação.
+        Define a página atual e armazena argumentos opcionais.
+        :param page_name: Nome da página.
+        :param kwargs: Argumentos opcionais para passar dados entre páginas.
         """
+        PageManager.current_page = page_name
+        PageManager.page_args = kwargs
         st.session_state["current_page"] = page_name
         st.rerun()
 
@@ -40,6 +48,14 @@ class PageManager:
         Retorna a página atual definida no estado global.
         """
         return st.session_state.get("current_page", self.default_page)
+    
+    @staticmethod
+    def get_page_args():
+        """
+        Recupera os argumentos passados para a página atual.
+        :return: Dicionário com os argumentos da página.
+        """
+        return PageManager.page_args
 
     def render_current_page(self):
         """

@@ -4,7 +4,9 @@ from hashlib import sha256
 import hashlib
 import uuid
 
+
 Base = declarative_base()
+
 
 class User(Base):
     __tablename__ = "user"
@@ -80,9 +82,11 @@ class Includes(Base):
     itinerary_id = Column(Integer, ForeignKey("itinerary.itinerary_id"), nullable=False)
     attraction_id = Column(Integer, ForeignKey("attraction.attraction_id"), nullable=False)
     time_of_day = Column(String(120), nullable=False)
+    date = Column(Date, nullable=False)
 
     def __repr__(self):
-        return f"<Includes {self.itinerary_id} - {self.attraction_id}>"
+        return f"<Includes {self.itinerary_id} - {self.attraction_id} - {self.date}>"
+
 
 class Attraction(Base):
     __tablename__ = "attraction"
@@ -92,7 +96,6 @@ class Attraction(Base):
     description = Column(String(120), nullable=True)
     photo = Column(String(120), nullable=True)
     attraction_type = Column(Integer, ForeignKey("attraction_type.attraction_type_id"), nullable=False)
-    location = Column(String(120), nullable=True)
 
     def __repr__(self):
         return f"<Attraction {self.name}>"
