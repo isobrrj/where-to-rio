@@ -1,6 +1,6 @@
 from utils.screen_template import ScreenTemplate
 import streamlit as st
-from tripguide.tourism_preference import TourismPreference
+from tourism_preference import TourismPreference
 
 
 class RequestScreen(ScreenTemplate):
