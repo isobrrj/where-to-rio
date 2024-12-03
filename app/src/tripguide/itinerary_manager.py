@@ -54,20 +54,18 @@ class ItineraryManager:
                 print(f"Erro ao criar Itinerary ou associar ao usuário: {e}")
                 return None
             
-    def get_itinerary_data(self):
+    def get_itinerary_data(self, itinerary_id):
         """
-        Obtém os dados completos de um itinerário associado a um usuário, incluindo as atrações, organizadas por data.
+        Obtém os dados completos de um itinerário pelo ID, incluindo as atrações, organizadas por data.
+        :param itinerary_id: ID do itinerário a ser buscado.
         :return: Um dicionário contendo os detalhes do itinerário e atrações organizadas por dia.
         """
         with self.session_manager as session:
-            user_id = st.session_state.get("user_id")  # Certifique-se de que o ID do usuário está disponível
-
             try:
-                # Busca o itinerário relacionado ao usuário logado
+                # Busca o itinerário pelo ID
                 itinerary = (
                     session.query(Itinerary)
-                    .join(Owns, Owns.itinerary_id == Itinerary.itinerary_id)
-                    .filter(Owns.user_id == user_id)
+                    .filter(Itinerary.itinerary_id == itinerary_id)
                     .first()
                 )
 
@@ -129,7 +127,6 @@ class ItineraryManager:
             except Exception as e:
                 print(f"Erro ao buscar os dados do itinerário: {e}")
                 return None
-
         
     def add_to_includes(self, itinerary_id, attraction_id, time_of_day, date):
         """
@@ -153,12 +150,14 @@ class ItineraryManager:
             self.session_manager.rollback()
             print(f"Erro ao adicionar à tabela Includes: {e}")
 
-    def get_user_itineraries(self, user_id):
+    def get_user_itineraries(self):
         """
         Retorna todos os itinerários associados a um usuário específico.
         :param user_id: ID do usuário.
         :return: Lista de itinerários.
         """
+        user_id = st.session_state.get("user_id")
+
         with self.session_manager as session:
             try:
                 itineraries = (

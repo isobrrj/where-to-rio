@@ -1,4 +1,5 @@
 from datetime import timedelta
+from page_manager import PageManager
 import streamlit as st
 from tripguide.itinerary_manager import ItineraryManager
 from tripguide.attraction_manager import AttractionManager
@@ -17,6 +18,7 @@ class ResponseScreen:
         """
         Renderiza a página do roteiro de viagem.
         """
+
         st.markdown(
             """
             <h1 style="text-align: center;font-family: Montserrat; font-size: 36px; color: #333;">
@@ -26,7 +28,14 @@ class ResponseScreen:
             unsafe_allow_html=True
         )
 
-        itinerary_data = self.itinerary_manager.get_itinerary_data()
+        itinerary_args = PageManager.get_page_args()
+        itinerary_id = itinerary_args.get("itinerary_id")
+
+        if not itinerary_id:
+            st.warning("Roteiro não encontrado.")
+            return
+
+        itinerary_data = self.itinerary_manager.get_itinerary_data(itinerary_id=itinerary_id)
         if not itinerary_data:
             st.warning("Nenhum roteiro encontrado para o usuário.")
             return
