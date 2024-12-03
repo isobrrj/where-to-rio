@@ -21,6 +21,47 @@ class TripPlanner:
         self.attraction_manager = AttractionManager()
         self.itinerary_manager = ItineraryManager()
 
+    def add_includes_for_itinerary(self, itinerary_id, attractions):
+        """
+        Adiciona entradas à tabela Includes para um itinerário e suas atrações.
+        :param itinerary_id: ID do itinerário.
+        :param attractions: Lista de atrações sugeridas no formato:
+            [(name, time_of_day, description, operating_hours)]
+        """
+        for attraction in attractions:
+            name, time_of_day, description, operating_hours = attraction
+
+            # Verifica se a atração já existe no banco
+            existing_attraction = self.attraction_manager.get_attraction_by_name(name)
+
+            if existing_attraction:
+                # Se existir, usa o ID da atração existente
+                attraction_id = existing_attraction.attraction_id
+            else:
+                # Se não existir, cria uma nova atração
+                self.attraction_manager.insert_attraction(
+                    name=name,
+                    operating_hours=operating_hours,
+                    description=description,
+                    attraction_type=1,  # Ajuste para o tipo de atração (defina a lógica necessária aqui)
+                    photo=None  # Adicione uma foto, se aplicável
+                )
+
+                # Busca novamente para obter o ID da atração recém-inserida
+                new_attraction = self.attraction_manager.get_attraction_by_name(name)
+                if new_attraction:
+                    attraction_id = new_attraction.attraction_id
+                else:
+                    print(f"Erro ao criar a atração {name}.")
+                    continue
+
+            # Insere na tabela Includes
+            self.itinerary_manager.add_to_includes(
+                itinerary_id=itinerary_id,
+                attraction_id=attraction_id,
+                time_of_day=time_of_day
+            )
+
     def process_preferences(self):
         """
         Processa as preferências do usuário e retorna os IDs dos tipos de atrações e restaurantes.
