@@ -1,6 +1,6 @@
 from openai_tourism_agent.rio_attraction_ml import RioAttractionML
-from trip_guide import Day, TripGuideDay
-import re
+from tripguide.trip_guide import Day, TripGuideDay
+import json
 from datetime import datetime
 from database.config import DATABASE_URL
 
@@ -36,27 +36,27 @@ class TripGuideBuilder:
         return response
 
     def build_trip_guide_day(self, response):
-        # Extração de dados com regex
-        pattern = r"Dia (\d{2}/\d{2}/\d{4}) \(([^)]+)\) - (\w+) - (.*?) Descrição: (.*?) Localização: (.*?) Categoria de Atração:"
-        matches = re.findall(pattern, response, re.DOTALL)
-        print(matches)
-        # Organização dos dados no objeto Day
+        resp_json = json.loads(response)
+
         activities = {"morning": [], "afternoon": [], "evening": []}
         number_of_turns = 0
         days = []
 
-        for match in matches:
-            date, day_of_week, period, activity, description, location = match
+        for match in resp_json["sugestao"]:
             activity_details = {
-                "name": activity.strip(),
-                "location": location.strip(),
-                "description": description.strip()
+                "name": match["Atração"].strip(),
+                "location": match["Descrição"].strip(),
+                "description": match["Localização"].strip()
             }
-            if period.lower() == "manhã":
+            period = match["Turno"].lower()
+            date = match["Data"]
+            day_of_week = match["Dia da Semana"]
+
+            if period == "manhã":
                 activities["morning"].append(activity_details)
-            elif period.lower() == "tarde":
+            elif period == "tarde":
                 activities["afternoon"].append(activity_details)
-            elif period.lower() == "noite":
+            elif period == "noite":
                 activities["evening"].append(activity_details)
 
             number_of_turns += 1
@@ -73,6 +73,6 @@ class TripGuideBuilder:
                 days.append(day)
                 number_of_turns = 0
                 activities = {"morning": [], "afternoon": [], "evening": []}
-        
+
         trip_guide_day = TripGuideDay("roteiro", days=days)
         return trip_guide_day
