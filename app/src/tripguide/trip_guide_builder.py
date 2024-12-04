@@ -10,7 +10,7 @@ class TripGuideBuilder:
         self.tourism_preference = tourism_preference
 
     def build_question_message_llm(self):
-        str_question = f"Quais pontos turisticos posso visitar, durante minha viagem, entre o dia {self.tourism_preference.init_date} e {self.tourism_preference.end_date} no Rio de Janeiro? Estarei hospedado no bairro {self.tourism_preference.neigh} e  e tenho preferência por conhecer: "
+        str_question = f"Quais pontos turisticos posso visitar, durante minha viagem, entre o dia {self.tourism_preference.init_date} e {self.tourism_preference.end_date} no Rio de Janeiro? Estarei hospedado no bairro {self.tourism_preference.neigh} e tenho preferência por conhecer: "
         for k in self.tourism_preference.attr_preferences:
             if self.tourism_preference.attr_preferences[k]:
                 str_question += f" {k},"
@@ -39,10 +39,7 @@ class TripGuideBuilder:
         # Extração de dados com regex
         pattern = r"Dia (\d{2}/\d{2}/\d{4}) \(([^)]+)\) - (\w+) - (.*?) Descrição: (.*?) Localização: (.*?) Categoria de Atração:"
         matches = re.findall(pattern, response, re.DOTALL)
-
-        resultados = re.findall(pattern, response)
-        print(resultados)
-
+        
         # Organização dos dados no objeto Day
         activities = {"morning": [], "afternoon": [], "evening": []}
         number_of_turns = 0

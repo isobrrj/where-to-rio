@@ -11,7 +11,7 @@ class AttractionManager:
     def __init__(self):
         self.session = SessionManager()
 
-    def insert_attraction(self, name, operating_hours, description, attraction_type, location, photo=None):
+    def insert_attraction(self, name, operating_hours, description, attraction_type, photo=None):
         """
         Insere uma nova atração na tabela Attraction.
 
@@ -29,8 +29,7 @@ class AttractionManager:
                 operating_hours=operating_hours,
                 description=description,
                 attraction_type=attraction_type,
-                photo=photo,
-                location=location
+                photo=photo
             )
 
             # Adiciona a instância ao banco de dados
@@ -48,6 +47,18 @@ class AttractionManager:
         Fecha a sessão quando a instância de AttractionManager é destruída.
         """
         self.session.close()
+    
+    def get_attraction_by_name(self, name):
+        """
+        Busca uma atração pelo nome.
+        :param name: Nome da atração.
+        :return: Objeto Attraction se encontrado, ou None.
+        """
+        try:
+            return self.session.query(Attraction).filter(Attraction.name == name).first()
+        except Exception as e:
+            print(f"Erro ao buscar a atração {name}: {e}")
+            return None
 
 
 if __name__ == "__main__":

@@ -69,19 +69,19 @@ class TripGuideDay:
     """
     Representa um roteiro de viagem composto por vários dias.
     """
-    def __init__(self, name):
+    def __init__(self, name, days=None):
         """
         Inicializa o roteiro de viagem.
-        
+
         :param name: O nome do roteiro de viagem.
         """
         self.name = name
-        self.days = []  # Lista de objetos Day
+        self.days = [] if not days else days  # Lista de objetos Day
 
     def add_day(self, day):
         """
         Adiciona um objeto Day ao roteiro.
-        
+
         :param day: Um objeto Day.
         """
         if isinstance(day, Day):

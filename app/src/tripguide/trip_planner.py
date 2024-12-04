@@ -3,7 +3,7 @@ from database.models import AttractionType
 from tripguide.trip_guide_builder import TripGuideBuilder
 from tripguide.attraction_manager import AttractionManager
 from tripguide.itinerary_manager import ItineraryManager
-
+import streamlit as st
 
 class TripPlanner:
     """
@@ -20,47 +20,6 @@ class TripPlanner:
         self.user_id = user_id
         self.attraction_manager = AttractionManager()
         self.itinerary_manager = ItineraryManager()
-
-    def add_includes_for_itinerary(self, itinerary_id, attractions):
-        """
-        Adiciona entradas à tabela Includes para um itinerário e suas atrações.
-        :param itinerary_id: ID do itinerário.
-        :param attractions: Lista de atrações sugeridas no formato:
-            [(name, time_of_day, description, operating_hours)]
-        """
-        for attraction in attractions:
-            name, time_of_day, description, operating_hours = attraction
-
-            # Verifica se a atração já existe no banco
-            existing_attraction = self.attraction_manager.get_attraction_by_name(name)
-
-            if existing_attraction:
-                # Se existir, usa o ID da atração existente
-                attraction_id = existing_attraction.attraction_id
-            else:
-                # Se não existir, cria uma nova atração
-                self.attraction_manager.insert_attraction(
-                    name=name,
-                    operating_hours=operating_hours,
-                    description=description,
-                    attraction_type=1,  # Ajuste para o tipo de atração (defina a lógica necessária aqui)
-                    photo=None  # Adicione uma foto, se aplicável
-                )
-
-                # Busca novamente para obter o ID da atração recém-inserida
-                new_attraction = self.attraction_manager.get_attraction_by_name(name)
-                if new_attraction:
-                    attraction_id = new_attraction.attraction_id
-                else:
-                    print(f"Erro ao criar a atração {name}.")
-                    continue
-
-            # Insere na tabela Includes
-            self.itinerary_manager.add_to_includes(
-                itinerary_id=itinerary_id,
-                attraction_id=attraction_id,
-                time_of_day=time_of_day
-            )
 
     def process_preferences(self):
         """
@@ -103,7 +62,7 @@ class TripPlanner:
             return ""
         finally:
             session.close()
-
+    
     def map_budget_to_number(self):
         """
         Mapeia o valor do orçamento para um número correspondente.
@@ -123,24 +82,26 @@ class TripPlanner:
         """
         trip_guide_builder = TripGuideBuilder(tourism_preference=self.tourism_preference)
         question = trip_guide_builder.build_question_message_llm()
-
+        st.write(question)
+        suggestion = trip_guide_builder.ask_chat_gpt_about_attractions(question)
+        st.write(suggestion)
         # Obter sugestões do modelo (aqui está mockado)
-        suggestion = """
-        Dia 03/12/2024 (Terça-Feira) - Manhã - Maracanã Descrição: Estádio Jornalista Mário Filho, mais conhecido como Maracanã, ou carinhosamente como Maraca, é um estádio de futebol localizado no bairro de mesmo nome, na Zona Norte da cidade brasileira do Rio de Janeiro. Localização: R. Prof. Eurico Rabelo - Maracanã, Rio de Janeiro - RJ, 20271-150 Categoria de Atração: Principais Pontos Turísticos
-        Dia 03/12/2024 (Terça-Feira) - Tarde - Praia de Copacabana Descrição: A Praia de Copacabana é uma praia localizada no bairro de Copacabana, na Zona Sul da cidade do Rio de Janeiro, no Brasil. É considerada uma das praias mais famosas do mundo. Localização: Copacabana; Brasil Categoria de Atração: Praias
-        Dia 03/12/2024 (Terça-Feira) - Noite - Praia de Ipanema Descrição: Esta é uma praia bastante badalada no Rio, frequentada por artistas, jovens, turistas e moradores que aproveitam seu calçadão para a prática de exercícios. A praia do bairro nobre é um dos points da cidade quando o assunto é curtir o mar e tem uma parte destinada ao público LGBT+. As condições do mar dependem do período, mas muitas vezes o mar é tranquilo, com ondas fracas. Localização: Avenida Vieira Souto, Rio de Janeiro, Estado do Rio de Janeiro 22420-002 Brasil Categoria de Atração: Praias
-        Dia 04/12/2024 (Quarta-Feira) - Manhã - Parque Lage Descrição: O Parque Lage é um parque público no bairro Jardim Botânico, na Zona Sul do Rio de Janeiro. Possui trilhas, jardins, um belo palacete e uma vista incrível para o Cristo Redentor. Localização: R. Jardim Botânico, 414 - Jardim Botânico, Rio de Janeiro - RJ, 22461-000 Categoria de Atração: Parques e Trilhas
-        Dia 04/12/2024 (Quarta-Feira) - Tarde - Museu Histórico Nacional Descrição: O Museu Histórico Nacional é um museu localizado na Praça Marechal Âncora, no centro histórico do Rio de Janeiro. Possui um acervo que conta a história do Brasil desde a época do descobrimento. Localização: Praça Marechal Âncora, S/N - Centro, Rio de Janeiro - RJ, 20021-200 Categoria de Atração: Patrimônio Histórico e Cultural
-        Dia 04/12/2024 (Quarta-Feira) - Noite - Pão de Açúcar Descrição: O Pão de Açúcar é um dos principais pontos turísticos do Rio de Janeiro. É um complexo de morros localizado na entrada da Baía de Guanabara, no bairro da Urca, com uma vista panorâmica incrível da cidade. Localização: Av. Pasteur, 520 - Urca, Rio de Janeiro - RJ, 22290-255 Categoria de Atração: Principais Pontos Turísticos
-        Dia 05/12/2024 (Quinta-Feira) - Manhã - Jardim Botânico Descrição: O Jardim Botânico do Rio de Janeiro é um dos mais importantes do Brasil, com uma grande diversidade de plantas e árvores. Possui uma estufa de plantas raras, lagos e trilhas para caminhada. Localização: R. Jardim Botânico, 1008 - Jardim Botânico, Rio de Janeiro - RJ, 22460-030 Categoria de Atração: Parques e Trilhas
-        Dia 05/12/2024 (Quinta-Feira) - Tarde - Museu do Amanhã Descrição: O Museu do Amanhã é um museu de ciências localizado na Praça Mauá, na região portuária do Rio de Janeiro. Possui exposições interativas sobre sustentabilidade, meio ambiente e o futuro da humanidade. Localização: Praça Mauá, 1 - Centro, Rio de Janeiro - RJ, 20081-240 Categoria de Atração: Patrimônio Histórico e Cultural
-        Dia 05/12/2024 (Quinta-Feira) - Noite - Lapa Descrição: A Lapa é um bairro boêmio do Rio de Janeiro, conhecido pelos seus arcos, bares, casas de show e vida noturna agitada. É um local tradicional para quem busca diversão e música ao vivo. Localização: Lapa, Rio de Janeiro - RJ Categoria de Atração: Principais Pontos Turísticos
-        Espero que aproveite sua viagem e as sugestões de roteiro!
-    """
+        #     suggestion = """
+        #     Dia 03/12/2024 (Terça-Feira) - Manhã - Maracanã Descrição: Estádio Jornalista Mário Filho, mais conhecido como Maracanã, ou carinhosamente como Maraca, é um estádio de futebol localizado no bairro de mesmo nome, na Zona Norte da cidade brasileira do Rio de Janeiro. Localização: R. Prof. Eurico Rabelo - Maracanã, Rio de Janeiro - RJ, 20271-150 Categoria de Atração: Principais Pontos Turísticos
+        #     Dia 03/12/2024 (Terça-Feira) - Tarde - Praia de Copacabana Descrição: A Praia de Copacabana é uma praia localizada no bairro de Copacabana, na Zona Sul da cidade do Rio de Janeiro, no Brasil. É considerada uma das praias mais famosas do mundo. Localização: Copacabana; Brasil Categoria de Atração: Praias
+        #     Dia 03/12/2024 (Terça-Feira) - Noite - Praia de Ipanema Descrição: Esta é uma praia bastante badalada no Rio, frequentada por artistas, jovens, turistas e moradores que aproveitam seu calçadão para a prática de exercícios. A praia do bairro nobre é um dos points da cidade quando o assunto é curtir o mar e tem uma parte destinada ao público LGBT+. As condições do mar dependem do período, mas muitas vezes o mar é tranquilo, com ondas fracas. Localização: Avenida Vieira Souto, Rio de Janeiro, Estado do Rio de Janeiro 22420-002 Brasil Categoria de Atração: Praias
+        #     Dia 04/12/2024 (Quarta-Feira) - Manhã - Parque Lage Descrição: O Parque Lage é um parque público no bairro Jardim Botânico, na Zona Sul do Rio de Janeiro. Possui trilhas, jardins, um belo palacete e uma vista incrível para o Cristo Redentor. Localização: R. Jardim Botânico, 414 - Jardim Botânico, Rio de Janeiro - RJ, 22461-000 Categoria de Atração: Parques e Trilhas
+        #     Dia 04/12/2024 (Quarta-Feira) - Tarde - Museu Histórico Nacional Descrição: O Museu Histórico Nacional é um museu localizado na Praça Marechal Âncora, no centro histórico do Rio de Janeiro. Possui um acervo que conta a história do Brasil desde a época do descobrimento. Localização: Praça Marechal Âncora, S/N - Centro, Rio de Janeiro - RJ, 20021-200 Categoria de Atração: Patrimônio Histórico e Cultural
+        #     Dia 04/12/2024 (Quarta-Feira) - Noite - Pão de Açúcar Descrição: O Pão de Açúcar é um dos principais pontos turísticos do Rio de Janeiro. É um complexo de morros localizado na entrada da Baía de Guanabara, no bairro da Urca, com uma vista panorâmica incrível da cidade. Localização: Av. Pasteur, 520 - Urca, Rio de Janeiro - RJ, 22290-255 Categoria de Atração: Principais Pontos Turísticos
+        #     Dia 05/12/2024 (Quinta-Feira) - Manhã - Jardim Botânico Descrição: O Jardim Botânico do Rio de Janeiro é um dos mais importantes do Brasil, com uma grande diversidade de plantas e árvores. Possui uma estufa de plantas raras, lagos e trilhas para caminhada. Localização: R. Jardim Botânico, 1008 - Jardim Botânico, Rio de Janeiro - RJ, 22460-030 Categoria de Atração: Parques e Trilhas
+        #     Dia 05/12/2024 (Quinta-Feira) - Tarde - Museu do Amanhã Descrição: O Museu do Amanhã é um museu de ciências localizado na Praça Mauá, na região portuária do Rio de Janeiro. Possui exposições interativas sobre sustentabilidade, meio ambiente e o futuro da humanidade. Localização: Praça Mauá, 1 - Centro, Rio de Janeiro - RJ, 20081-240 Categoria de Atração: Patrimônio Histórico e Cultural
+        #     Dia 05/12/2024 (Quinta-Feira) - Noite - Lapa Descrição: A Lapa é um bairro boêmio do Rio de Janeiro, conhecido pelos seus arcos, bares, casas de show e vida noturna agitada. É um local tradicional para quem busca diversão e música ao vivo. Localização: Lapa, Rio de Janeiro - RJ Categoria de Atração: Principais Pontos Turísticos
+        #     Espero que aproveite sua viagem e as sugestões de roteiro!
+        # """
 
         # Processar as sugestões
         trip_guide_day = trip_guide_builder.build_trip_guide_day(suggestion)
-
+        st.write(trip_guide_day)
         # Processar as preferências e obter os IDs dos tipos de atrações
         preferences = self.process_preferences()
 
@@ -182,7 +143,6 @@ class TripPlanner:
         name = activity["name"]
         description = activity.get("description", "Descrição não fornecida")
         operating_hours = activity.get("operating_hours", "Horário não especificado")
-        location = activity.get("location", None)
 
         # Verifica se a atração já existe no banco
         existing_attraction = self.attraction_manager.get_attraction_by_name(name)
@@ -194,7 +154,7 @@ class TripPlanner:
             name=name,
             operating_hours=operating_hours,
             description=description,
-            attraction_type=1,  # Ajuste conforme necessário
+            attraction_type=1,
             photo=None
         )
 
