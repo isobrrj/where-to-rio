@@ -1,5 +1,7 @@
 from database.sessionmanager import SessionManager
 from database.models import Attraction
+import pandas as pd
+
 
 class AttractionManager:
     """
@@ -33,8 +35,7 @@ class AttractionManager:
             print(f"Erro ao buscar a atração {name}: {e}")
             return None
 
-
-    def insert_attraction(self, name, operating_hours, description, attraction_type, photo=None):
+    def insert_attraction(self, name, operating_hours, description, attraction_type, location, photo=None):
         """
         Insere uma nova atração na tabela Attraction.
 
@@ -53,6 +54,7 @@ class AttractionManager:
                 description=description,
                 attraction_type=attraction_type,
                 photo=photo,
+                location=location
             )
 
             # Adiciona a instância ao banco de dados
@@ -70,3 +72,8 @@ class AttractionManager:
         Fecha a sessão quando a instância de AttractionManager é destruída.
         """
         self.session.close()
+
+
+if __name__ == "__main__":
+    attr_df = pd.read_csv("openai_tourism_agent/attractions.csv")
+    print(attr_df.head())

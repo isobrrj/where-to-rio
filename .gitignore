@@ -3,8 +3,6 @@ __pycache__/
 *.py[cod]
 *$py.class
 
-app/src/database/whereto_DB.db
-
 # C extensions
 *.so
 
