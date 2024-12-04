@@ -24,7 +24,7 @@ class TripGuideBuilder:
                 a.operating_hours AS "Dias e Turnos de Funcionamento",	
                 a.description AS "Descrição",
                 a.location AS "Localização",
-                at2." attraction_type" AS "Categoria de Atração"
+                at2.attraction_type AS "Categoria de Atração"
             FROM attraction a
             INNER JOIN attraction_type at2 ON at2.attraction_type_id = a.attraction_type
         """
@@ -39,9 +39,7 @@ class TripGuideBuilder:
         # Extração de dados com regex
         pattern = r"Dia (\d{2}/\d{2}/\d{4}) \(([^)]+)\) - (\w+) - (.*?) Descrição: (.*?) Localização: (.*?) Categoria de Atração:"
         matches = re.findall(pattern, response, re.DOTALL)
-
-        resultados = re.findall(pattern, response)
-
+        print(matches)
         # Organização dos dados no objeto Day
         activities = {"morning": [], "afternoon": [], "evening": []}
         number_of_turns = 0
