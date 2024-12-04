@@ -41,7 +41,6 @@ class TripGuideBuilder:
         matches = re.findall(pattern, response, re.DOTALL)
 
         resultados = re.findall(pattern, response)
-        print(resultados)
 
         # Organização dos dados no objeto Day
         activities = {"morning": [], "afternoon": [], "evening": []}

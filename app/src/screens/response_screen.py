@@ -14,6 +14,34 @@ class ResponseScreen:
         self.itinerary_manager = ItineraryManager()
         self.attraction_manager = AttractionManager()
 
+    # def generate_pdf(self):
+            
+    #         """
+    #         Gera o PDF com o conteúdo do roteiro de viagem.
+    #         """
+    #         pdf = FPDF()
+    #         pdf.set_auto_page_break(auto=True, margin=15)
+    #         pdf.add_page()
+    #         pdf.set_font("Arial", size=12)
+    #         pdf.set_font("Arial", style="B", size=16)
+    #         pdf.cell(200, 10, txt="Roteiro de Viagem", ln=True, align="C")
+    #         for day in self.itinerary_data:
+    #             pdf.set_font("Arial", style="B", size=14)
+    #             pdf.cell(200, 10, txt=f"{day['day_of_week'].upper()} - {day['date']}", ln=True, align="L")
+
+    #             pdf.set_font("Arial", size=12)
+    #             for period, activities in day['activities'].items():
+    #                 pdf.cell(200, 10, txt=f"{period.capitalize()}:", ln=True, align="L")
+    #                 for activity in activities or ["Nenhuma atividade"]:
+    #                     pdf.cell(10)
+    #                     pdf.cell(0, 10, txt=f"- {activity}", ln=True, align="L")
+
+    #             pdf.cell(0, 10, txt="", ln=True)
+    #         # Salvar o PDF no caminho especificado
+    #         pdf_path = "roteiro_viagem.pdf"
+    #         pdf.output(pdf_path)
+    #         return pdf_path
+
     def render(self):
         """
         Renderiza a página do roteiro de viagem.
@@ -39,6 +67,17 @@ class ResponseScreen:
         if not itinerary_data:
             st.warning("Nenhum roteiro encontrado para o usuário.")
             return
+        
+        # # Botão para exportar o PDF
+        # pdf_generator = PDFGenerator(itinerary_data)
+        # pdf_path = pdf_generator.generate_pdf()
+        # with open(pdf_path, "rb") as pdf_file:
+        #     st.download_button(
+        #         label="Gerar PDF",
+        #         data=pdf_file,
+        #         file_name="Roteiro_de_Viagem.pdf",
+        #         mime="application/pdf",
+        #     )
         
         # Dicionário para traduzir os dias da semana
         days_translation = {
@@ -85,6 +124,24 @@ class ResponseScreen:
             unsafe_allow_html=True
         )
 
+        # Dados do itinerário
+        activities = itinerary_data.get("activities", {})
+        dates = [
+            {"date": itinerary_data["start_date"], "day_of_week": "Segunda-feira"},
+            {"date": itinerary_data["end_date"], "day_of_week": "Quarta-feira"},
+        ]  # Ajuste a lógica para preencher dias corretamente
+
+        dates = []
+        current_date = itinerary_data["start_date"]
+        end_date = itinerary_data["end_date"]
+
+        while current_date <= end_date:
+            dates.append({
+                "date": current_date.strftime("%Y-%m-%d"),
+                "day_of_week": current_date.strftime("%A")
+            })
+            current_date += timedelta(days=1)
+
         # Criar colunas para cada dia
         days = itinerary_data.get("days", [])
         columns = st.columns(len(days))  # Criar uma coluna para cada dia
@@ -96,6 +153,7 @@ class ResponseScreen:
             activities = day_info.get("activities", {"morning": [], "afternoon": [], "evening": []})
 
             with col:
+
                 st.markdown(
                     f"""
                     <div class="day-container">

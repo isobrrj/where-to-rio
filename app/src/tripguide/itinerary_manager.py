@@ -58,7 +58,6 @@ class ItineraryManager:
         """
         Obtém os dados completos de um itinerário pelo ID, incluindo as atrações, organizadas por data.
         :param itinerary_id: ID do itinerário a ser buscado.
-        :return: Um dicionário contendo os detalhes do itinerário e atrações organizadas por dia.
         """
         with self.session_manager as session:
             try:
