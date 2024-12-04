@@ -1,4 +1,6 @@
 from datetime import timedelta
+
+from fpdf import FPDF
 from page_manager import PageManager
 import streamlit as st
 from tripguide.itinerary_manager import ItineraryManager
@@ -14,33 +16,77 @@ class ResponseScreen:
         self.itinerary_manager = ItineraryManager()
         self.attraction_manager = AttractionManager()
 
-    # def generate_pdf(self):
-            
-    #         """
-    #         Gera o PDF com o conteúdo do roteiro de viagem.
-    #         """
-    #         pdf = FPDF()
-    #         pdf.set_auto_page_break(auto=True, margin=15)
-    #         pdf.add_page()
-    #         pdf.set_font("Arial", size=12)
-    #         pdf.set_font("Arial", style="B", size=16)
-    #         pdf.cell(200, 10, txt="Roteiro de Viagem", ln=True, align="C")
-    #         for day in self.itinerary_data:
-    #             pdf.set_font("Arial", style="B", size=14)
-    #             pdf.cell(200, 10, txt=f"{day['day_of_week'].upper()} - {day['date']}", ln=True, align="L")
+    def generate_pdf(self, itinerary_data):
+        """
+        Gera o PDF com o conteúdo do roteiro de viagem.
+        :param itinerary_data: Dicionário contendo os dados do itinerário.
+        :return: Caminho do PDF gerado.
+        """
+        # Tradução dos dias da semana
+        days_translation = {
+            "Monday": "Segunda-feira",
+            "Tuesday": "Terça-feira",
+            "Wednesday": "Quarta-feira",
+            "Thursday": "Quinta-feira",
+            "Friday": "Sexta-feira",
+            "Saturday": "Sábado",
+            "Sunday": "Domingo",
+        }
 
-    #             pdf.set_font("Arial", size=12)
-    #             for period, activities in day['activities'].items():
-    #                 pdf.cell(200, 10, txt=f"{period.capitalize()}:", ln=True, align="L")
-    #                 for activity in activities or ["Nenhuma atividade"]:
-    #                     pdf.cell(10)
-    #                     pdf.cell(0, 10, txt=f"- {activity}", ln=True, align="L")
+        # Tradução dos períodos do dia
+        periods_translation = {
+            "morning": "Manhã",
+            "afternoon": "Tarde",
+            "evening": "Noite",
+        }
 
-    #             pdf.cell(0, 10, txt="", ln=True)
-    #         # Salvar o PDF no caminho especificado
-    #         pdf_path = "roteiro_viagem.pdf"
-    #         pdf.output(pdf_path)
-    #         return pdf_path
+        pdf = FPDF()
+        pdf.set_auto_page_break(auto=True, margin=15)
+        pdf.add_page()
+        pdf.set_font("Arial", style="B", size=16)
+        pdf.cell(200, 10, txt="Roteiro de Viagem", ln=True, align="C")
+
+        for day in itinerary_data.get("days", []):
+            day_date = day["date"].strftime("%d/%m/%Y")
+            day_of_week = days_translation.get(day["day_of_week"], day["day_of_week"])
+
+            pdf.set_font("Arial", style="B", size=14)
+            pdf.cell(200, 10, txt=f"{day_of_week} - {day_date}", ln=True, align="L")
+
+            pdf.set_font("Arial", size=12)
+            for period, activities in day["activities"].items():
+                translated_period = periods_translation.get(period, period.capitalize())
+                pdf.cell(200, 10, txt=f"{translated_period}:", ln=True, align="L")
+                if activities:
+                    for activity in activities:
+                        activity_name = activity.get("name", "Atividade sem Nome")
+                        location = activity.get("location", "Local não especificado")
+                        pdf.cell(10)  # Recuo
+                        pdf.cell(0, 10, txt=f"- {activity_name} ({location})", ln=True, align="L")
+                else:
+                    pdf.cell(10)
+                    pdf.cell(0, 10, txt="- Nenhuma atividade", ln=True, align="L")
+
+            pdf.cell(0, 10, txt="", ln=True)  # Linha em branco entre os dias
+
+        # Salvar o PDF no caminho especificado
+        pdf_path = "roteiro_viagem.pdf"
+        pdf.output(pdf_path)
+        return pdf_path
+    
+    def render_pdf_button(self, itinerary_data):
+        """
+        Renderiza o botão para exportar o PDF do roteiro de viagem.
+        :param itinerary_data: Dicionário contendo os dados do itinerário.
+        """
+        pdf_path = self.generate_pdf(itinerary_data)  # Chamando a função como método da classe
+        with open(pdf_path, "rb") as pdf_file:
+            st.download_button(
+                label="Gerar PDF",
+                data=pdf_file,
+                file_name="Roteiro_de_Viagem.pdf",
+                mime="application/pdf",
+            )
 
     def render(self):
         """
@@ -68,16 +114,7 @@ class ResponseScreen:
             st.warning("Nenhum roteiro encontrado para o usuário.")
             return
         
-        # # Botão para exportar o PDF
-        # pdf_generator = PDFGenerator(itinerary_data)
-        # pdf_path = pdf_generator.generate_pdf()
-        # with open(pdf_path, "rb") as pdf_file:
-        #     st.download_button(
-        #         label="Gerar PDF",
-        #         data=pdf_file,
-        #         file_name="Roteiro_de_Viagem.pdf",
-        #         mime="application/pdf",
-        #     )
+        self.render_pdf_button(itinerary_data)
         
         # Dicionário para traduzir os dias da semana
         days_translation = {
@@ -126,11 +163,6 @@ class ResponseScreen:
 
         # Dados do itinerário
         activities = itinerary_data.get("activities", {})
-        dates = [
-            {"date": itinerary_data["start_date"], "day_of_week": "Segunda-feira"},
-            {"date": itinerary_data["end_date"], "day_of_week": "Quarta-feira"},
-        ]  # Ajuste a lógica para preencher dias corretamente
-
         dates = []
         current_date = itinerary_data["start_date"]
         end_date = itinerary_data["end_date"]
