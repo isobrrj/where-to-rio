@@ -72,6 +72,7 @@ class Itinerary(Base):
     start_date = Column(Date, nullable=False)
     end_date = Column(Date, nullable=False)
     budget = Column(Float, nullable=True)
+    user_location = Column(String(128), nullable=False)
 
     def __repr__(self):
         return f"<Itinerary {self.itinerary_id}>"
