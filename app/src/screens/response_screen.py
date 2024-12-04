@@ -5,6 +5,7 @@ from page_manager import PageManager
 import streamlit as st
 from tripguide.itinerary_manager import ItineraryManager
 from tripguide.attraction_manager import AttractionManager
+from utils.maps.travel_routes import TravelRoutes
 
 class ResponseScreen:
     """
@@ -156,6 +157,11 @@ class ResponseScreen:
             .morning { background-color: #caf0f8; }
             .afternoon { background-color: #90e0ef; }
             .evening { background-color: #0077b6; color: white; }
+            .activity-link {
+                text-decoration: none;
+                color: #000000 !important;
+                font-weight: bold;
+            }
             </style>
             """,
             unsafe_allow_html=True
@@ -174,9 +180,10 @@ class ResponseScreen:
             })
             current_date += timedelta(days=1)
 
-        # Criar colunas para cada dia
+        # Criação das colunas com as informações dos roteiros
         days = itinerary_data.get("days", [])
         columns = st.columns(len(days))  # Criar uma coluna para cada dia
+        destination = itinerary_data.get("user_location")
 
         for col, day_info in zip(columns, days):
             date = day_info.get("date", "Data Desconhecida").strftime("%d/%m/%Y")
@@ -194,15 +201,24 @@ class ResponseScreen:
                         </div>
                         <div class="activity-section morning">
                             <strong>Manhã</strong><br>
-                            {"<br>".join(activity.get('name', 'Atividade sem Nome') for activity in activities.get('morning', [])) or "Nenhuma atividade"}
+                            {"<br>".join(
+                            f"{activity.get('name', 'Atividade sem Nome')} </br> 🗺️ <a href='{TravelRoutes(f'{destination}', activity.get('name')).generate_travel_route()}' class='activity-link'>Rota</a>"
+                            for activity in activities.get('morning', [])
+                            ) or "Nenhuma atividade"}
                         </div>
                         <div class="activity-section afternoon">
                             <strong>Tarde</strong><br>
-                            {"<br>".join(activity.get('name', 'Atividade sem Nome') for activity in activities.get('afternoon', [])) or "Nenhuma atividade"}
+                            {"<br>".join(
+                            f"{activity.get('name', 'Atividade sem Nome')} </br> 🗺️ <a href='{TravelRoutes(f'{destination}', activity.get('name')).generate_travel_route()}' class='activity-link'>Rota</a>"
+                            for activity in activities.get('afternoon', [])
+                            ) or "Nenhuma atividade"}
                         </div>
                         <div class="activity-section evening">
                             <strong>Noite</strong><br>
-                            {"<br>".join(activity.get('name', 'Atividade sem Nome') for activity in activities.get('evening', [])) or "Nenhuma atividade"}
+                            {"<br>".join(
+                            f"{activity.get('name', 'Atividade sem Nome')} </br> 🗺️ <a href='{TravelRoutes(f'{destination}', activity.get('name')).generate_travel_route()}' class='activity-link'>Rota</a>"
+                            for activity in activities.get('evening', [])
+                            ) or "Nenhuma atividade"}
                         </div>
                     </div>
                     """,

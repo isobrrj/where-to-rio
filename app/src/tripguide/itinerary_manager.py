@@ -13,7 +13,7 @@ class ItineraryManager:
     def __init__(self):
         self.session_manager = SessionManager()
 
-    def create_itinerary(self, user_id, start_date, end_date, budget=None, preference=None):
+    def create_itinerary(self, user_id, start_date, end_date, user_location, budget=None, preference=None):
         """
         Cria um novo Itinerary e associa ao usuário logado via tabela Owns.
         :param user_id: ID do usuário logado.
@@ -33,7 +33,8 @@ class ItineraryManager:
                 new_itinerary = Itinerary(
                     start_date=start_date,
                     end_date=end_date,
-                    budget=budget
+                    budget=budget,
+                    user_location=user_location
                 )
                 session.add(new_itinerary)
                 session.flush()  # Garante que o ID do itinerário seja gerado
@@ -77,6 +78,7 @@ class ItineraryManager:
                     "start_date": itinerary.start_date,
                     "end_date": itinerary.end_date,
                     "budget": itinerary.budget,
+                    "user_location": itinerary.user_location,
                     "days": []  # Lista de dias com atividades
                 }
 
