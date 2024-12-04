@@ -28,7 +28,6 @@ class TripGuideBuilder:
         matches = re.findall(pattern, response, re.DOTALL)
 
         resultados = re.findall(pattern, response)
-        print(resultados)
 
         # Organização dos dados no objeto Day
         activities = {"morning": [], "afternoon": [], "evening": []}
@@ -36,8 +35,6 @@ class TripGuideBuilder:
         days = []
 
         for match in matches:
-            print(number_of_turns)
-            print(match)
             date, day_of_week, period, activity, description, location = match
             activity_details = {
                 "name": activity.strip(),
@@ -55,8 +52,6 @@ class TripGuideBuilder:
 
             if number_of_turns == 3:
                 date_obj = datetime.strptime(date, "%d/%m/%Y")
-                print("OLHA SO AQUI!!!!!!!!!!!!!!!!!!!!!!!!")
-                print(date_obj)
                 day = Day(
                     date=date_obj,
                     day_of_week=day_of_week,
