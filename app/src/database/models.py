@@ -96,6 +96,7 @@ class Attraction(Base):
     description = Column(String(120), nullable=True)
     photo = Column(String(120), nullable=True)
     attraction_type = Column(Integer, ForeignKey("attraction_type.attraction_type_id"), nullable=False)
+    location = Column(String(120), nullable=True)
 
     def __repr__(self):
         return f"<Attraction {self.name}>"
