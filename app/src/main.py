@@ -1,9 +1,9 @@
-
 import streamlit as st
 from tripguide.trip_planner import TripPlanner
 from manager.page_manager import PageManager
 from screens.base_screen import BaseScreen
 from streamlit_cookies_manager import EncryptedCookieManager
+
 
 # Configuração inicial da página
 st.set_page_config(page_title="WHEREtoRio", layout="wide")
