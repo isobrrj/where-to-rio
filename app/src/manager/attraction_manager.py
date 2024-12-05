@@ -75,5 +75,5 @@ class AttractionManager:
 
 
 if __name__ == "__main__":
-    attr_df = pd.read_csv("openai_tourism_agent/attractions.csv")
+    attr_df = pd.read_csv("chat_gpt/attractions.csv")
     print(attr_df.head())

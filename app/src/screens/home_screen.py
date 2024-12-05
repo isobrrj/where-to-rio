@@ -1,5 +1,5 @@
 import streamlit as st
-from page_manager import PageManager
+from manager.page_manager import PageManager
 
 class HomeScreen:
     """

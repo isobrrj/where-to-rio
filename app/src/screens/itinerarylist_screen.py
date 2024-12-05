@@ -1,6 +1,6 @@
-from page_manager import PageManager
+from manager.page_manager import PageManager
 import streamlit as st
-from tripguide.itinerary_manager import ItineraryManager
+from manager.itinerary_manager import ItineraryManager
 
 class ItineraryListScreen:
     """

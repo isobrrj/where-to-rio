@@ -1,7 +1,7 @@
 
 import streamlit as st
 from tripguide.trip_planner import TripPlanner
-from page_manager import PageManager
+from manager.page_manager import PageManager
 from screens.base_screen import BaseScreen
 from streamlit_cookies_manager import EncryptedCookieManager
 

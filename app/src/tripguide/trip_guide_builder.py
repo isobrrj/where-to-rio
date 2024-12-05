@@ -1,4 +1,4 @@
-from openai_tourism_agent.rio_attraction_ml import RioAttractionML
+from chat_gpt.rio_attraction_ml import RioAttractionML
 from tripguide.trip_guide import Day, TripGuideDay
 import json
 from datetime import datetime
