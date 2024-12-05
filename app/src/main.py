@@ -43,5 +43,4 @@ if result:
     st.success(message)
 
 
-
 footer = BaseScreen.render_footer()
