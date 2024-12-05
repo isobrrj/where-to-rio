@@ -101,6 +101,7 @@ class TripPlanner:
             user_id=self.user_id,
             start_date=self.tourism_preference.init_date,
             end_date=self.tourism_preference.end_date,
+            user_location=self.tourism_preference.neigh, 
             budget=numeric_budget,
             preference=preferences
         )
