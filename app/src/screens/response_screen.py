@@ -1,11 +1,11 @@
 from datetime import timedelta
-
 from fpdf import FPDF
 from manager.page_manager import PageManager
 import streamlit as st
 from manager.itinerary_manager import ItineraryManager
 from manager.attraction_manager import AttractionManager
 from utils.maps.travel_routes import TravelRoutes
+
 
 class ResponseScreen:
     """
@@ -89,7 +89,7 @@ class ResponseScreen:
                 mime="application/pdf",
             )
 
-    def render(self):
+    def show_window(self):
         """
         Renderiza a página do roteiro de viagem.
         """

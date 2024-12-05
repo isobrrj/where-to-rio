@@ -2,7 +2,6 @@ from datetime import timedelta
 from database.sessionmanager import SessionManager
 from database.models import Attraction, Includes, Itinerary, Owns
 from sqlalchemy.exc import SQLAlchemyError
-from sqlalchemy.orm import joinedload
 import streamlit as st
 
 class ItineraryManager:

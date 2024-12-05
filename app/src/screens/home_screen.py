@@ -1,13 +1,15 @@
 import streamlit as st
 from manager.page_manager import PageManager
+from utils.screen_template import ScreenTemplate
 
-class HomeScreen:
+
+class HomeScreen(ScreenTemplate):
     """
     Classe responsável por renderizar a página inicial.
     """
 
     @staticmethod
-    def render():
+    def show_window():
         """
         Renderiza o conteúdo principal da página inicial.
         """

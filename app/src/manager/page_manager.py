@@ -103,10 +103,10 @@ class PageManager:
                 page_instance = page_class()
 
             # Verificar e chamar o método render
-            if hasattr(page_instance, "render"):
-                return page_instance.render()
+            if hasattr(page_instance, "show_window"):
+                return page_instance.show_window()
             else:
-                st.error(f"A classe {class_name} não possui o método render.")
+                st.error(f"A classe {class_name} não possui o método show_window.")
                 return None
         except (ImportError, AttributeError, ValueError) as e:
             st.error(f"Erro ao carregar a página {page_class_path}: {e}")

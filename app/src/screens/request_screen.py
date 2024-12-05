@@ -47,7 +47,7 @@ class RequestScreen(ScreenTemplate):
             "Vargem Pequena", "Vila Kennedy", "Vila Militar", "Vila Valqueire"
         ]
 
-    def render(self):
+    def show_window(self):
         st.title("Solicitação de roteiro")
         st.write("Preencha o formulário com informações sobre sua viagem:")
 
