@@ -22,18 +22,6 @@ class AttractionManager:
         except Exception as e:
             print(f"Erro ao buscar a atração {name}: {e}")
             return None
-        
-    def get_attraction_by_name(self, name):
-        """
-        Busca uma atração pelo nome.
-        :param name: Nome da atração.
-        :return: Objeto Attraction se encontrado, ou None.
-        """
-        try:
-            return self.session.query(Attraction).filter(Attraction.name == name).first()
-        except Exception as e:
-            print(f"Erro ao buscar a atração {name}: {e}")
-            return None
 
     def insert_attraction(self, name, operating_hours, description, attraction_type, location, photo=None):
         """
