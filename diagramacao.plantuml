@@ -120,9 +120,11 @@ class RioAttractionML #SkyBlue{
     + set_prompt()
 }
 
-class TripPlanner #SkyBlue {
+class TripPlanner #WhiteSmoke {
     + tourism_preference: TourismPreference
     + user_id
+    + attraction_manager
+    + itinerary_manager
 
     + process_preferences()
     + map_budget_to_number()
@@ -130,20 +132,20 @@ class TripPlanner #SkyBlue {
     - _get_or_create_attraction()
 }
 
-class AttractionManager {
+class AttractionManager #WhiteSmoke {
     + session
 
     + get_attraction_by_name()
     + insert_attraction()
 }
 
-class AuthManager {
+class AuthManager #WhiteSmoke {
     + hash_password()
     + authenticate_user()
     + logout()
 }
 
-class ItineraryManager {
+class ItineraryManager #WhiteSmoke {
     + create_itinerary()
     + get_itinerary_data()
     + add_to_includes()
@@ -151,7 +153,7 @@ class ItineraryManager {
     + delete_itinerary()
 }
 
-class PageManager {
+class PageManager #WhiteSmoke {
     + set_page()
     + get_page()
     + get_page_args()
@@ -159,7 +161,7 @@ class PageManager {
     + _render_page()
 }
 
-class UserManager {
+class UserManager #WhiteSmoke {
     + is_email_registered()
     + add_user()
 }
@@ -171,6 +173,15 @@ ScreenTemplate <|-- RequestScreen
 ScreenTemplate <|-- ItineraryListScreen
 ScreenTemplate <|-- HomeScreen
 ScreenTemplate <|-- RegisterScreen
+
+ItineraryListScreen  "1" o-- "1" ItineraryManager
+
+ResponseScreen "1" o-- "1" ItineraryManager
+ResponseScreen "1" o-- "1" AttractionManager
+
+PageManager "1" o-- "1" BaseScreen
+LoginScreen "1" o-- "1" AuthManager
+RegisterScreen "1" o-- "1" UserManager
 
 ChatGptAI <|-- RioAttractionML
 
@@ -184,6 +195,11 @@ TripGuideDayBuilder "1" o--- "1" ChatGptAI
 
 TripPlanner "1" o-- "1" TripGuideDayBuilder
 TripPlanner "1" o-- "1" TourismPreference
+TripPlanner "1" o-- "1" ItineraryManager
+TripPlanner "1" o-- "1" AttractionManager
+
+RequestScreen "1" o-- "1" TourismPreference
+ResponseScreen  "1" o-- "1" TripGuideDay
 
 legend right 
     | Color | Type |
