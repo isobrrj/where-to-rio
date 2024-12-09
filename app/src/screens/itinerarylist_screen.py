@@ -1,8 +1,10 @@
-from page_manager import PageManager
+from manager.page_manager import PageManager
 import streamlit as st
-from tripguide.itinerary_manager import ItineraryManager
+from manager.itinerary_manager import ItineraryManager
+from utils.screen_template import ScreenTemplate
 
-class ItineraryListScreen:
+
+class ItineraryListScreen(ScreenTemplate):
     """
     Classe responsável por renderizar a tela de lista de roteiros.
     """
@@ -11,7 +13,7 @@ class ItineraryListScreen:
         self.user_id = user_id
         self.itinerary_manager = ItineraryManager()
 
-    def render(self):
+    def show_window(self):
         """
         Renderiza a página com a lista de roteiros do usuário.
         """

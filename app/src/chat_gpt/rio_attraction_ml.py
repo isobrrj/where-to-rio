@@ -1,4 +1,4 @@
-from openai_tourism_agent.chat_gpt_ai import ChatGptAPI
+from chat_gpt.chat_gpt_ai import ChatGptAPI
 from langchain.prompts import PromptTemplate
 
 
@@ -43,7 +43,7 @@ class RioAttractionML(ChatGptAPI):
 
 if __name__ == "__main__":
     chat_gpt = RioAttractionML()
-    chat_gpt.load_documents_from_csv(path="src/openai_tourism_agent/attractions.csv")
+    chat_gpt.load_documents_from_csv(path="src/chat_gpt/attractions.csv")
     chat_gpt.build_chain()
     message = "Quais pontos turisticos posso visitar, durante minha viagem, entre o dia 25/11/2024 (Segunda-feira) e 30/11/2024 (Sábado) no Rio de Janeiro? Quais pontos turisticos posso visitar, durante minha viagem, entre o dia 18/10/2024 e 20/10/2024 no Rio de Janeiro?  Estarei hospedado no bairro Copacabana e tenho preferência por conhecer os Principais Pontos Turísticos, Praias, Arquitetura e Infraestrutura Urbana."
     response = chat_gpt.generate_response(message)

@@ -4,167 +4,209 @@ skinparam classFontColor automatic
 skinparam classHeaderBackgroundColor #444
 allow_mixing
 
-class WebApp #WhiteSmoke {
-    + main()
-    + display_auth()
-    + display_register()
-    + display_request()
-    + display_response()
-    + display_explore()
-}
-
-Interface ScreenTemplate #LightYellow {
+Interface ScreenTemplate #WhiteSmoke {
     + type
     + show_window()
 }
 
-class AuthScreen #WhiteSmoke {
-    + type
+class BaseScreen #WhiteSmoke {
+    + apply_custom_styles()
+    + render_navbar()
+    + render_banner()
+    + get_base64_image()
+    + render_footer()
+    + navigate_to()
+}
+
+class HomeScreen #WhiteSmoke {
+    + show_window()
+}
+
+class ItineraryListScreen #WhiteSmoke {
+    + show_window()
+}
+
+class LoginScreen #WhiteSmoke {
+    + auth_manager
+    + cookie_manager
+
     + show_window()
 }
 
 class RegisterScreen #WhiteSmoke{
-    + type
-    + show_window()
-}
+    + user_manager
 
-class ExploreScreen #WhiteSmoke {
-    + type
     + show_window()
 }
 
 class ResponseScreen #WhiteSmoke {
-    + type
-    + trip_guide: TripGuide
-    + feedback_trip_guide: FeedbackTripGuide
+    + user_id
+    + itinerary_manager: ItineraryManager
+    + attraction_manager: AttractionManager
+
+    + generate_pdf()
+    + render_pdf_button()
     + show_window()
 }
 
 class RequestScreen #WhiteSmoke {
-    + type
-    + tourism_preference: BaseTourismPreference
+    + tourism_preference: TourismPreference
     + show_window()
 }
 
-interface BaseTourismPreference #LightYellow {
-    + generate_data()
+
+class TourismPreference #SkyBlue {
+    + neigh
+    + init_date
+    + end_date
+    + attr_preferences
+    + lunch_preferences
+    + budget
+
 }
 
-
-class TourismPreference #WhiteSmoke {
-    + tourist_attractions
-    + trip_period
-    + hosting_neigh
-    + generate_data()
-}
-
-class User #WhiteSmoke {
-    + id
-    + email 
-    + password
-    + name
-    + generate_data()
-}
-
-class FeedbackTripGuide #WhiteSmoke {
+class FeedbackTripGuide #SkyBlue {
     + trip_guide: TripGuideDay
     + generate_data()
 }
 
-interface BaseTripGuide #LightYellow {
-    + generate_data()
-}
-
-class TripGuideDay #WhiteSmoke {
+class TripGuideDay #SkyBlue {
+    + name
     + days[Day]
+    --
+    + add_day()
     + generate_data()
 }
 
-class Day #WhiteSmoke {
+class Day #SkyBlue {
     + date
     + day_of_week
+    + breakfast
     + morning
     + lunch
     + afternoon
-    + tonight
+    + dinner
+    + evening
+
+    + add_morning_activity()
+    + add_afternoon_activity()
+    + add_evening_activity()
 }
 
-interface BaseGuideBuilder #LightYellow {
-    + tourism_preference: BaseTourismPreference
-    - trip_guide: BaseTripGuide
-
-    + generate_trip_guide()
-}
-
-class TripGuideDayBuilder #WhiteSmoke {
+class TripGuideDayBuilder #SkyBlue {
     + tourism_preference: TourismPreference
-    - trip_guide: TripGuideDayBuilder
+    + chat_gpt_ai: ChatGptAI
 
-    + generate_trip_guide()
+    + build_question_message_llm()
+    + ask_chat_gpt_about_attractions()
+    + build_trip_guide_day()
 }
 
-interface MachineLearningModel #LightYellow {
-    + predict()
+abstract ChatGptAI #LightYellow {
+    + embeddings
+    + llm
+    + documents
+
+    + load_documents_from_sqlite_url()
+    + load_documents_from_csv()
+    + build_chain()
+    + retrieve_info()
+    + generate_response()
+    ~{abstract} set_template()
+    ~{abstract} set_prompt()
 }
 
-class GuideML #WhiteSmoke{
-    + predict()
+class RioAttractionML #SkyBlue{
+    + set_template()
+    + set_prompt()
 }
 
-class MapsAPI #WhiteSmoke{
-    + get_place()
+class TripPlanner #WhiteSmoke {
+    + tourism_preference: TourismPreference
+    + user_id
+    + attraction_manager
+    + itinerary_manager
+
+    + process_preferences()
+    + map_budget_to_number()
+    + process_trip()
+    - _get_or_create_attraction()
 }
 
-interface DBEntity #LightYellow {
-    + select()
-    + insert()
+class AttractionManager #WhiteSmoke {
+    + session
+
+    + get_attraction_by_name()
+    + insert_attraction()
 }
 
-class DatabaseRepository #WhiteSmoke {
-    + get(entity: DBEntity)
-    + set(entity: DBEntity)
-
+class AuthManager #WhiteSmoke {
+    + hash_password()
+    + authenticate_user()
+    + logout()
 }
 
-ScreenTemplate  <|-- AuthScreen
+class ItineraryManager #WhiteSmoke {
+    + create_itinerary()
+    + get_itinerary_data()
+    + add_to_includes()
+    + get_user_itineraries()
+    + delete_itinerary()
+}
+
+class PageManager #WhiteSmoke {
+    + set_page()
+    + get_page()
+    + get_page_args()
+    + render_current_page()
+    + _render_page()
+}
+
+class UserManager #WhiteSmoke {
+    + is_email_registered()
+    + add_user()
+}
+
+BaseScreen --- ScreenTemplate
+ScreenTemplate  <|-- LoginScreen
 ScreenTemplate <|-- ResponseScreen
 ScreenTemplate <|-- RequestScreen
-ScreenTemplate <|-- ExploreScreen
+ScreenTemplate <|-- ItineraryListScreen
+ScreenTemplate <|-- HomeScreen
 ScreenTemplate <|-- RegisterScreen
 
-ExploreScreen "1" o-- "1" DatabaseRepository
+ItineraryListScreen  "1" o-- "1" ItineraryManager
 
-BaseGuideBuilder <|-- TripGuideDayBuilder
+ResponseScreen "1" o-- "1" ItineraryManager
+ResponseScreen "1" o-- "1" AttractionManager
 
-WebApp *-- ScreenTemplate
-WebApp "1" o-- "1" TripGuideDayBuilder
+PageManager "1" o-- "1" BaseScreen
+LoginScreen "1" o-- "1" AuthManager
+RegisterScreen "1" o-- "1" UserManager
 
-DBEntity <|-- User
-DBEntity <|-- TourismPreference
-DBEntity <|-- TripGuideDay
-DBEntity <|-- FeedbackTripGuide
+ChatGptAI <|-- RioAttractionML
 
-DBEntity "1" o-- "1" DatabaseRepository
-
-GuideML <|-- MachineLearningModel
-
-BaseTourismPreference <|-- TourismPreference
-
-BaseTripGuide <|-- TripGuideDay
 TripGuideDay "1" *-- "+" Day
 
 FeedbackTripGuide "1" *-- "1" TripGuideDay
 
-
-TripGuideDayBuilder "1" o-- "1" GuideML
-TripGuideDayBuilder "1" o-- "1" MapsAPI
 TripGuideDayBuilder "1" o-- "1" TourismPreference 
 TripGuideDayBuilder "1" o--- "1" TripGuideDay  
+TripGuideDayBuilder "1" o--- "1" ChatGptAI
+
+TripPlanner "1" o-- "1" TripGuideDayBuilder
+TripPlanner "1" o-- "1" TourismPreference
+TripPlanner "1" o-- "1" ItineraryManager
+TripPlanner "1" o-- "1" AttractionManager
+
+RequestScreen "1" o-- "1" TourismPreference
+ResponseScreen  "1" o-- "1" TripGuideDay
 
 legend right 
     | Color | Type |
-    |<#WhiteSmoke>| Frozen_Spot|
-    |<#LightYellow>| Hot_Spot|
+    |<#WhiteSmoke>| Instance |
+    |<#SkyBlue>| Frozen Spot |
+    |<#LightYellow>| Hot Spot|
 endlegend
 
 @enduml

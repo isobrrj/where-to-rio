@@ -1,7 +1,7 @@
 import streamlit as st
 import os
 import base64
-from screens.login_screen import AuthManager
+from manager.auth_manager import AuthManager
 
 class BaseScreen:
     """
