@@ -4,11 +4,6 @@ skinparam classFontColor automatic
 skinparam classHeaderBackgroundColor #444
 allow_mixing
 
-Interface ScreenTemplate #WhiteSmoke {
-    + type
-    + show_window()
-}
-
 class BaseScreen #WhiteSmoke {
     + apply_custom_styles()
     + render_navbar()
@@ -18,43 +13,51 @@ class BaseScreen #WhiteSmoke {
     + navigate_to()
 }
 
-class HomeScreen #WhiteSmoke {
-    + show_window()
+package TemplateMethod2 {
+
+    Interface ScreenTemplate #WhiteSmoke {
+        + type
+        + show_window()
+    }
+
+
+    class HomeScreen #WhiteSmoke {
+        + show_window()
+    }
+
+    class ItineraryListScreen #WhiteSmoke {
+        + show_window()
+    }
+
+    class LoginScreen #WhiteSmoke {
+        + auth_manager
+        + cookie_manager
+
+        + show_window()
+    }
+
+    class RegisterScreen #WhiteSmoke{
+        + user_manager
+
+        + show_window()
+    }
+
+    class ResponseScreen #WhiteSmoke {
+        + user_id
+        + itinerary_manager: ItineraryManager
+        + attraction_manager: AttractionManager
+
+        + generate_pdf()
+        + render_pdf_button()
+        + show_window()
+    }
+
+    class RequestScreen #WhiteSmoke {
+        + tourism_preference: TourismPreference
+        + show_window()
+    }
+
 }
-
-class ItineraryListScreen #WhiteSmoke {
-    + show_window()
-}
-
-class LoginScreen #WhiteSmoke {
-    + auth_manager
-    + cookie_manager
-
-    + show_window()
-}
-
-class RegisterScreen #WhiteSmoke{
-    + user_manager
-
-    + show_window()
-}
-
-class ResponseScreen #WhiteSmoke {
-    + user_id
-    + itinerary_manager: ItineraryManager
-    + attraction_manager: AttractionManager
-
-    + generate_pdf()
-    + render_pdf_button()
-    + show_window()
-}
-
-class RequestScreen #WhiteSmoke {
-    + tourism_preference: TourismPreference
-    + show_window()
-}
-
-
 class TourismPreference #SkyBlue {
     + neigh
     + init_date
@@ -102,23 +105,25 @@ class TripGuideDayBuilder #SkyBlue {
     + build_trip_guide_day()
 }
 
-abstract ChatGptAI #LightYellow {
-    + embeddings
-    + llm
-    + documents
+package TemplateMethod {
+    abstract ChatGptAI #LightYellow {
+        + embeddings
+        + llm
+        + documents
 
-    + load_documents_from_sqlite_url()
-    + load_documents_from_csv()
-    + build_chain()
-    + retrieve_info()
-    + generate_response()
-    ~{abstract} set_template()
-    ~{abstract} set_prompt()
-}
+        + load_documents_from_sqlite_url()
+        + load_documents_from_csv()
+        + build_chain()
+        + retrieve_info()
+        + generate_response()
+        ~{abstract} set_template()
+        ~{abstract} set_prompt()
+    }
 
-class RioAttractionML #SkyBlue{
-    + set_template()
-    + set_prompt()
+    class RioAttractionML #SkyBlue{
+        + set_template()
+        + set_prompt()
+    }
 }
 
 class TripPlanner #WhiteSmoke {
@@ -167,6 +172,13 @@ class UserManager #WhiteSmoke {
     + add_user()
 }
 
+package Singleton {
+
+    class SessionManager #WhiteSmoke {
+        + _instance
+    }
+}
+
 BaseScreen --- ScreenTemplate
 ScreenTemplate  <|-- LoginScreen
 ScreenTemplate <|-- ResponseScreen
@@ -201,6 +213,12 @@ TripPlanner "1" o-- "1" AttractionManager
 
 RequestScreen "1" o-- "1" TourismPreference
 ResponseScreen  "1" o-- "1" TripGuideDay
+
+AttractionManager "1" --- "1" SessionManager
+AuthManager "1" --- "1" SessionManager
+ItineraryManager "1" --- "1" SessionManager
+UserManager "1" --- "1" SessionManager
+TripPlanner "1" --- "1" SessionManager
 
 legend right 
     | Color | Type |

@@ -1,6 +1,7 @@
 from database.sessionmanager import SessionManager
 from database.models import User
 from hashlib import sha256
+import streamlit as st
 
 
 class AuthManager:
