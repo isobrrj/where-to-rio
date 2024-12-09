@@ -6,8 +6,9 @@ from database.config import DATABASE_URL
 
 
 class TripGuideBuilder:
-    def __init__(self, tourism_preference) -> None:
+    def __init__(self, tourism_preference, chat_gpt_ai) -> None:
         self.tourism_preference = tourism_preference
+        self.chat_gpt_ai = chat_gpt_ai
 
     def build_question_message_llm(self):
         str_question = f"Quais pontos turisticos posso visitar, durante minha viagem, entre o dia {self.tourism_preference.init_date} e {self.tourism_preference.end_date} no Rio de Janeiro? Estarei hospedado no bairro {self.tourism_preference.neigh} e  e tenho preferência por conhecer: "
@@ -28,11 +29,10 @@ class TripGuideBuilder:
             FROM attraction a
             INNER JOIN attraction_type at2 ON at2.attraction_type_id = a.attraction_type
         """
-        chat_gpt = RioAttractionML()
-        chat_gpt.load_documents_from_sqlite_url(sqlite_url=DATABASE_URL,
+        self.chat_gpt.load_documents_from_sqlite_url(sqlite_url=DATABASE_URL,
                                                 query=query)
-        chat_gpt.build_chain()
-        response = chat_gpt.generate_response(question)
+        self.chat_gpt.build_chain()
+        response = self.chat_gpt.generate_response(question)
         return response
 
     def build_trip_guide_day(self, response):

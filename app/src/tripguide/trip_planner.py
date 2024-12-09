@@ -1,6 +1,7 @@
 from database.sessionmanager import SessionManager
 from database.models import AttractionType
 from tripguide.trip_guide_builder import TripGuideBuilder
+from openai_tourism_agent import RioAttractionML
 from manager.attraction_manager import AttractionManager
 from manager.itinerary_manager import ItineraryManager
 import streamlit as st
@@ -20,6 +21,7 @@ class TripPlanner:
         self.user_id = user_id
         self.attraction_manager = AttractionManager()
         self.itinerary_manager = ItineraryManager()
+        self.chat_gpt = RioAttractionML()
 
     def process_preferences(self):
         """
@@ -80,7 +82,8 @@ class TripPlanner:
         """
         Processa as preferências do usuário para criar um roteiro.
         """
-        trip_guide_builder = TripGuideBuilder(tourism_preference=self.tourism_preference)
+        trip_guide_builder = TripGuideBuilder(tourism_preference=self.tourism_preference,
+                                              chat_gpt_ai=self.chat_gpt)
         question = trip_guide_builder.build_question_message_llm()
         sugestion = trip_guide_builder.ask_chat_gpt_about_attractions(question)
         st.write(sugestion)

@@ -95,6 +95,7 @@ class Day #SkyBlue {
 
 class TripGuideDayBuilder #SkyBlue {
     + tourism_preference: TourismPreference
+    + chat_gpt_ai: ChatGptAI
 
     + build_question_message_llm()
     + ask_chat_gpt_about_attractions()
