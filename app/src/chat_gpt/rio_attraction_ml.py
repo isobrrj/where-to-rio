@@ -17,9 +17,10 @@ class RioAttractionML(ChatGptAPI):
             2/ Coloque cada sugestão em uma estrutura de lista em formato JSON, seguindo o seguinte formato: "sugestao": [Sugestões]. No final, tudo isso deve estar dentro de um dicionario em formato JSON.
             3/ Cada turno em cada dia só terá uma única atração de sugestão.
             4/ Cada dia sempre terá sempre 3 turnos: Manhã, Tarde e Noite.
-            5/ Evite repetir sugestões de atrações entre diferentes dias e turnos, o ideal é que durante toda a sugestão sempre seja colocado uma nova atração que ainda não foi sugerido.
-            6/ Todos os dias e turnos devem ser preenchidos com alguma sugestão.
-            7/ A data deve seguir o formato dd/mm/YYYY.
+            5/ Não repita sugestões de atrações.
+            6/ Todos os dias e turnos devem ser preenchidos com alguma sugestão que não tenha sido dada anteriormente.
+            7/ Busque atrações turísticas além do conjunto de dados que fornecemos.
+            8/ A data deve seguir o formato dd/mm/YYYY.
             Aqui está a dúvida do nosso cliente.
             {message}
 

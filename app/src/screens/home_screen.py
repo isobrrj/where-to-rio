@@ -36,6 +36,3 @@ class HomeScreen(ScreenTemplate):
                 else:
                     st.warning("Por favor, faça login para acessar esta funcionalidade.")
                     PageManager.set_page("Login")
-        with col2:
-            if st.button("Buscar um passeio"):
-                PageManager.set_page("SearchTrips")
