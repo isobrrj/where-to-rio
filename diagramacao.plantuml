@@ -73,6 +73,12 @@ class FeedbackTripGuide #SkyBlue {
     + generate_data()
 }
 
+interface TripGuide #LightYellow {
+    + name
+
+    ~{abstract} generate_data()
+}
+
 class TripGuideDay #SkyBlue {
     + name
     + days[Day]
@@ -94,6 +100,15 @@ class Day #SkyBlue {
     + add_morning_activity()
     + add_afternoon_activity()
     + add_evening_activity()
+}
+
+interface TripGuideBuilder #LightYellow {
+    + tourism_preference: TourismPreference
+    + chat_gpt_ai: ChatGptAI
+
+    ~{abstract} build_question_message_llm()
+    ~{abstract} ask_chat_gpt_about_attractions()
+    ~{abstract} build_trip_guide_day()
 }
 
 class TripGuideDayBuilder #SkyBlue {
@@ -197,6 +212,10 @@ LoginScreen "1" o-- "1" AuthManager
 RegisterScreen "1" o-- "1" UserManager
 
 ChatGptAI <|-- RioAttractionML
+
+TripGuide <|-- TripGuideDay
+TripGuideBuilder <|-- TripGuideDayBuilder
+
 
 TripGuideDay "1" *-- "+" Day
 
