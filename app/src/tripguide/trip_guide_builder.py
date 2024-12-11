@@ -42,7 +42,7 @@ class TripGuideBuilder:
         number_of_turns = 0
         days = []
 
-        for match in resp_json["sugestao"]:
+        for match in resp_json[list(resp_json.keys())[0]]:
             activity_details = {
                 "name": match["Atração"].strip(),
                 "location": match["Descrição"].strip(),
