@@ -15,3 +15,7 @@ Migração do Banco:
 8. alembic upgrade head
 
 Agora será possível acessar o banco no dbeaver. A instância do Banco se encontra com o nome de arquivo "whereto_DB.db".
+
+9. Importar "attraction_types.csv" (dentro da pasta app/src/database) na tabela attraction_types.
+
+10. Importar "attraction.csv" (dentro da pasta app/src/database) na tabela attraction.
